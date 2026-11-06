@@ -2,6 +2,7 @@ import { readFileSync } from 'fs';
 import { join } from 'path';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import hbs from 'hbs';
+import { isDev } from './environment';
 
 const ROOT_DIR = join(__dirname, '..', '..');
 const VIEWS_DIR = join(ROOT_DIR, 'views');
@@ -51,9 +52,9 @@ export default function configureViews(app: NestExpressApplication): void {
 
   const partialsDir = join(VIEWS_DIR, 'partials');
   hbs.registerPartials(partialsDir);
-  // hbs reads partials once; outside production read them again before each
-  // page so new or edited partials show without restarting the server
-  if (process.env.ENV !== 'PROD')
+  // hbs reads partials once; on a developer's machine read them again before
+  // each page so new or edited partials show without restarting the server
+  if (isDev())
     app.use((req: { path: string }, _res: unknown, next: () => void) =>
       req.path.startsWith('/static') || req.path.startsWith('/api')
         ? next()

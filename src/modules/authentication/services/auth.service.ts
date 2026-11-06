@@ -17,6 +17,7 @@ import { AttemptService } from './attempt.service';
 import { CodeService } from './code.service';
 import { UserService } from './user.service';
 import { StorageService } from '../../shared/services/storage.service';
+import { isDev } from '../../../configs/environment';
 
 const VERIFY_CODE_MINUTES = 10;
 const RESET_CODE_MINUTES = 15;
@@ -490,7 +491,7 @@ export class AuthService {
   }
 
   private logDevCode(kind: string, email: string, code: string): void {
-    if (this.configService.get<string>('ENV') === 'DEV')
+    if (isDev(this.configService.get<string>('ENV')))
       this.logger.debug(`[DEV] ${kind} code for ${email}: ${code}`);
   }
 }
