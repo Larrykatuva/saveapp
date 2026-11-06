@@ -1,0 +1,43 @@
+{{#if merchants.length}}
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Merchant</th>
+          <th class="hide-md">Country</th>
+          <th class="hide-md">Type</th>
+          <th>Status</th>
+          <th class="hide-md">Created</th>
+          <th class="col-actions"><span class="sr-only">Open</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each merchants}}
+          <tr class="row-link" data-href="{{href}}">
+            <td>
+              <span class="entity">
+                {{#if logo}}<img class="tile" src="{{logo}}" alt="" data-fallback="{{initials}}" />{{else}}<span class="tile">{{initials}}</span>{{/if}}
+                <span class="entity-stack"><span class="entity-name">{{name}}</span><span class="entity-sub">{{email}}</span></span>
+              </span>
+            </td>
+            <td class="hide-md">{{#if country}}<span class="entity">{{#if flag}}<img class="flag" src="{{flag}}" alt="" loading="lazy" />{{/if}}{{country}}</span>{{else}}<span class="muted">Not set</span>{{/if}}</td>
+            <td class="hide-md"><span class="badge">{{type}}</span></td>
+            <td>
+              {{> shared/status tone=tone label=statusLabel}}
+              {{#if stageLabel}}<p class="entity-sub">{{stageLabel}}</p>{{/if}}
+            </td>
+            <td class="hide-md">{{created}}</td>
+            <td class="col-actions"><a class="icon-btn icon-btn-ghost icon-btn-xs" href="{{href}}" aria-label="Open {{name}}">{{icon "chevron-right" size=16}}</a></td>
+          </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+  {{> shared/pager}}
+{{else}}
+  {{#if filtered}}
+    {{> shared/empty icon="search" title="No merchants match" text="Try another search or status."}}
+  {{else}}
+    {{> shared/empty icon="store" title="No merchants yet" text="Businesses appear here as soon as they sign up and add their details."}}
+  {{/if}}
+{{/if}}

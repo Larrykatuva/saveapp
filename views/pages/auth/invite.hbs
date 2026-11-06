@@ -1,0 +1,73 @@
+<div class="auth-card">
+  {{#if closed}}
+    <header class="auth-header">
+      <span class="auth-badge">{{icon "mail-x" size=22}}</span>
+      <h1 class="auth-title">Invitation unavailable</h1>
+      <p class="auth-subtitle">{{closed}}</p>
+    </header>
+    <a class="btn btn-primary btn-block btn-lg" href="/auth/login">Go to sign in</a>
+  {{else}}
+    <header class="auth-header">
+      <span class="auth-badge">{{icon "mail-open" size=22}}</span>
+      <h1 class="auth-title">Join {{invite.entityName}}</h1>
+      <p class="auth-subtitle">You've been invited to SaveApp as <strong>{{invite.roleName}}</strong>.</p>
+    </header>
+
+    <div class="invite-card">
+      <span class="tile">{{#if invite.isStaff}}{{icon "shield-user" size=18}}{{else}}{{icon "building-2" size=18}}{{/if}}</span>
+      <span class="entity-stack">
+        <span class="entity-name">{{invite.entityName}}</span>
+        <span class="entity-sub">Invitation for {{invite.email}}</span>
+      </span>
+    </div>
+
+    {{> auth/alert}}
+
+    {{#if isRegister}}
+      <form method="post" action="/auth/invite/{{token}}/register" class="auth-form" novalidate data-loading-form>
+        <input type="hidden" name="_csrf" value="{{csrfToken}}" />
+        <p class="field-hint">Create your login to accept. Your email is {{invite.email}}.</p>
+        {{#if values.fullName}}
+          {{> auth/field name="fullName" label="Full name" icon="user-round" value=values.fullName error=errors.fullName autocomplete="name" autofocus=true}}
+        {{else}}
+          {{> auth/field name="fullName" label="Full name" icon="user-round" value=prefillName error=errors.fullName autocomplete="name" autofocus=true}}
+        {{/if}}
+        {{> auth/field name="phoneNumber" label="Phone" type="tel" icon="phone" value=values.phoneNumber error=errors.phoneNumber autocomplete="tel" inputmode="tel" placeholder="0712 345 678"}}
+        {{> auth/password name="password" label="Password" error=errors.password autocomplete="new-password" placeholder="Create a password" strength=true hint=passwordHint}}
+        {{> auth/password name="confirmPassword" label="Confirm password" error=errors.confirmPassword autocomplete="new-password" placeholder="Repeat your password"}}
+        <div class="field{{#if errors.terms}} has-error{{/if}}">
+          <label class="checkbox-row">
+            <input type="checkbox" class="checkbox" name="terms" {{#if values.terms}}checked{{/if}} required />
+            <span>I agree to the SaveApp <a class="link" href="https://saveapp.co.ke/site/" target="_blank" rel="noopener">terms and privacy policy</a></span>
+          </label>
+          {{#if errors.terms}}<p class="field-error">{{errors.terms}}</p>{{/if}}
+        </div>
+        <button type="submit" class="btn btn-primary btn-block btn-lg" data-loading-text="Joining…">Create login and join</button>
+      </form>
+    {{/if}}
+
+    {{#if isLogin}}
+      <form method="post" action="/auth/invite/{{token}}/login" class="auth-form" novalidate data-loading-form>
+        <input type="hidden" name="_csrf" value="{{csrfToken}}" />
+        <p class="field-hint">You already have a SaveApp login. Enter your password to accept.</p>
+        {{> auth/password name="password" label="Password" error=errors.password placeholder="Enter your password" forgot=true}}
+        <button type="submit" class="btn btn-primary btn-block btn-lg" data-loading-text="Joining…">Sign in and join</button>
+      </form>
+    {{/if}}
+
+    {{#if isAccept}}
+      <form method="post" action="/auth/invite/{{token}}/accept" class="auth-form" data-loading-form>
+        <input type="hidden" name="_csrf" value="{{csrfToken}}" />
+        <button type="submit" class="btn btn-primary btn-block btn-lg" data-loading-text="Joining…">Accept invitation</button>
+      </form>
+    {{/if}}
+
+    {{#if isOther}}
+      <div class="alert alert-warning">{{icon "triangle-alert" size=16}}<span>You're signed in as {{signedInEmail}}. Sign out, then open the link again to accept as {{invite.email}}.</span></div>
+      <form method="post" action="/auth/logout">
+        <input type="hidden" name="_csrf" value="{{csrfToken}}" />
+        <button type="submit" class="btn btn-outline btn-block btn-lg">Sign out</button>
+      </form>
+    {{/if}}
+  {{/if}}
+</div>

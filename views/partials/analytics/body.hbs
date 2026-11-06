@@ -1,0 +1,57 @@
+{{!-- Analytics filters, tiles and chart cards (Analytics pages and the admin merchant workspace). --}}
+<form class="analytics-filters" method="get" action="{{base}}">
+  <div class="seg-control" role="group" aria-label="Period">
+    {{#each ranges}}<a class="seg-control-item{{#if active}} is-active{{/if}}" href="{{href}}"{{#if active}} aria-current="true"{{/if}}>{{label}}</a>{{/each}}
+  </div>
+  {{#if showFilter}}
+    <input type="hidden" name="days" value="{{days}}" />
+    <label class="analytics-merchant">
+      {{icon "store" size=16}}
+      <span class="sr-only">Merchant</span>
+      <select name="business" data-auto-submit-select aria-label="Merchant">
+        <option value="">All merchants</option>
+        {{#each businesses}}<option value="{{id}}"{{#if selected}} selected{{/if}}>{{name}}</option>{{/each}}
+      </select>
+    </label>
+  {{/if}}
+</form>
+
+<div class="tiles analytics-tiles">
+  {{#each tiles}}
+    <div class="stat">
+      <span class="stat-head"><span>{{label}}</span><span class="tile">{{icon iconName size=16}}</span></span>
+      <span class="stat-value">{{value}}</span>
+      {{#if delta}}<span class="stat-delta stat-delta-{{delta.tone}}">{{delta.text}}</span>{{/if}}
+      {{#if sub}}<span class="stat-sub">{{sub}}</span>{{/if}}
+    </div>
+  {{/each}}
+</div>
+
+<div class="chart-grid">
+  {{#each charts}}
+    <section class="card chart-card{{#if wide}} chart-card-wide{{/if}}" aria-labelledby="{{id}}-title">
+      <div class="chart-card-head">
+        <h2 class="card-title" id="{{id}}-title">{{title}}</h2>
+        <p class="card-subtitle">{{subtitle}}</p>
+      </div>
+      {{#if empty}}
+        <div class="chart-empty">{{icon "chart-column" size=18}}<span>{{empty}}</span></div>
+      {{else}}
+        <div class="chart chart-{{kind}}" data-chart="{{kind}}" role="img" aria-label="{{title}}. Open View as table for the figures.">
+          <script type="application/json">{{{json data}}}</script>
+        </div>
+        <details class="chart-table">
+          <summary>{{icon "table-2" size=14}} View as table</summary>
+          <div class="table-wrap">
+            <table class="table">
+              <thead><tr>{{#each table.head}}<th>{{this}}</th>{{/each}}</tr></thead>
+              <tbody>{{#each table.rows}}<tr>{{#each this}}<td>{{this}}</td>{{/each}}</tr>{{/each}}</tbody>
+            </table>
+          </div>
+        </details>
+      {{/if}}
+    </section>
+  {{/each}}
+</div>
+
+<script src="/static/js/charts.js" defer></script>

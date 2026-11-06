@@ -1,0 +1,9 @@
+{{#> layout title="Some details need changes"}}
+  <h1>Some details need changes</h1>
+  <p>Hi {{name}},</p>
+  <p>The SaveApp team reviewed the documents for <strong>{{businessName}}</strong>. Please update the following and submit again:</p>
+  <ul>
+    {{#each items}}<li><strong>{{name}}</strong>: {{comment}}</li>{{/each}}
+  </ul>
+  {{> button url=url label="Update documents"}}
+{{/layout}}

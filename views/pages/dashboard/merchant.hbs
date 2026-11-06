@@ -1,0 +1,72 @@
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Welcome back, {{firstName}}</h1>
+    <p class="page-subtitle">{{business.name}} is verified on SaveApp.</p>
+  </div>
+  <div class="page-actions">
+    {{#if canCards}}<a class="btn btn-outline" href="/merchant/analytics">{{icon "chart-column" size=16}} Analytics</a>{{/if}}
+    {{#if (can "merchant.team.invite")}}<a class="btn btn-primary" href="/merchant/team/invites">{{icon "user-plus" size=16}} Invite a teammate</a>{{/if}}
+  </div>
+</div>
+
+{{#if activityTiles}}{{> dashboard/activity_tiles tiles=activityTiles}}{{/if}}
+
+{{#if canCards}}
+  <div class="grid-2 overview-grid">
+    {{> dashboard/recent_transactions rows=recent seeAll="/merchant/transactions"}}
+    {{#if health}}{{> dashboard/integration_health health=health}}{{/if}}
+  </div>
+{{/if}}
+
+<div class="tiles">
+  <a class="stat" href="/merchant/settings/onboarding">
+    <span class="stat-head"><span>Onboarding</span><span class="tile">{{icon "badge-check" size=16}}</span></span>
+    <span class="stat-value">{{progress.accepted}}/{{progress.required}}</span>
+  </a>
+  <a class="stat" href="/merchant/team/members">
+    <span class="stat-head"><span>Active team members</span><span class="tile">{{icon "users" size=16}}</span></span>
+    <span class="stat-value">{{team.active}}</span>
+  </a>
+  <a class="stat" href="/merchant/team/invites">
+    <span class="stat-head"><span>Open invitations</span><span class="tile">{{icon "mail-plus" size=16}}</span></span>
+    <span class="stat-value">{{team.invites}}</span>
+  </a>
+</div>
+
+<div class="grid-2">
+  <section class="card">
+    <div class="card-head">
+      <div class="entity">
+        {{#if business.logo}}<img class="tile tile-lg" src="{{business.logo}}" alt="" data-fallback="{{business.initials}}" />{{else}}<span class="tile tile-lg">{{business.initials}}</span>{{/if}}
+        <span class="entity-stack"><span class="card-title">{{business.name}}</span><span class="entity-sub">Business profile</span></span>
+      </div>
+      <a class="btn btn-outline btn-sm" href="/merchant/settings/business">Edit</a>
+    </div>
+    <div class="card-body">
+      <dl class="detail-rows">
+        <div><dt>Email</dt><dd>{{business.email}}</dd></div>
+        <div><dt>Phone</dt><dd>{{business.phone}}</dd></div>
+        <div><dt>Address</dt><dd>{{business.address}}</dd></div>
+        <div><dt>Country</dt><dd><span class="entity">{{#if business.flag}}<img class="flag" src="{{business.flag}}" alt="" />{{/if}}{{business.country}}</span></dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="card-head">
+      <div>
+        <h2 class="card-title">Onboarding checklist</h2>
+        <p class="card-subtitle">All done</p>
+      </div>
+    </div>
+    <div class="card-body">
+      <ul class="checklist">
+        <li><span class="check-mark is-done">{{icon "check" size=13}}</span><span class="checklist-name">Business details</span></li>
+        {{#each checklist}}
+          <li><span class="check-mark{{#if submission}} is-done{{/if}}">{{icon "check" size=13}}</span><span class="checklist-name">{{name}}</span>{{> kyc/item_status}}</li>
+        {{/each}}
+        <li><span class="check-mark is-done">{{icon "check" size=13}}</span><span class="checklist-name">Approved by SaveApp</span></li>
+      </ul>
+    </div>
+  </section>
+</div>

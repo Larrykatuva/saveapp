@@ -1,0 +1,55 @@
+<form class="drawer-form" method="post" action="{{action}}" data-ajax-form data-refresh="#roles-list" data-perm-picker novalidate>
+  <header class="drawer-header">
+    <div>
+      <p class="eyebrow">Add permissions</p>
+      <h2 class="drawer-title" id="drawer-title">{{role.name}}</h2>
+      <p class="drawer-subtitle">Pick the actions people with this role can take.</p>
+    </div>
+    <button type="button" class="icon-btn icon-btn-ghost" data-drawer-close aria-label="Close">{{icon "x" size=18}}</button>
+  </header>
+
+  {{#if availableCount}}
+    <div class="drawer-search">
+      <label class="input">
+        {{icon "search" size=16}}
+        <input type="search" placeholder="Filter permissions" aria-label="Filter permissions" data-perm-filter autocomplete="off" />
+      </label>
+    </div>
+  {{/if}}
+
+  <div class="drawer-content">
+    {{#if availableCount}}
+      {{#each groups}}
+        <fieldset class="pick-group" data-pick-group>
+          <div class="pick-group-head">
+            <legend class="perm-group-title">{{group}}</legend>
+            <button type="button" class="link-button link-sm" data-pick-all>Select all</button>
+          </div>
+          {{#each items}}
+            <label class="pick-row" data-pick-row data-name="{{description}}">
+              <input type="checkbox" name="permissionIds" value="{{id}}" />
+              <span class="pick-box">{{icon "check" size=12}}</span>
+              <span class="pick-name">{{description}}</span>
+              {{#if internal}}<span class="badge">Internal</span>{{/if}}
+            </label>
+          {{/each}}
+        </fieldset>
+      {{/each}}
+      <p class="roles-no-match" data-perm-no-match hidden>No permissions match your filter</p>
+    {{else}}
+      <div class="empty-state">
+        <span class="empty-icon">{{icon "badge-check" size=20}}</span>
+        <p class="empty-title">Everything is assigned</p>
+        <p class="empty-text">This role already has every permission available at this level.</p>
+      </div>
+    {{/if}}
+  </div>
+
+  <footer class="drawer-footer drawer-footer-split">
+    <span class="table-count"><b data-pick-count>0</b> selected</span>
+    <span class="drawer-footer-actions">
+      <button type="button" class="btn btn-outline" data-drawer-close>Cancel</button>
+      <button type="submit" class="btn btn-primary" data-pick-submit disabled data-loading-text="Adding…">Add permissions</button>
+    </span>
+  </footer>
+</form>

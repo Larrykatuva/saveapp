@@ -1,0 +1,10 @@
+<label class="switch-row">
+  <span>
+    <span class="field-label">{{label}}</span>
+    <span class="field-hint">{{hint}}</span>
+  </span>
+  <span class="switch">
+    <input type="checkbox" name="{{#if name}}{{name}}{{else}}active{{/if}}" {{#if checked}}checked{{/if}} />
+    <span class="switch-track"><span class="switch-thumb"></span></span>
+  </span>
+</label>

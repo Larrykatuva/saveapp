@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    {{> shared/head}}
+    <title>{{#if title}}{{title}} · {{/if}}SaveApp</title>
+  </head>
+  <body class="onboarding">
+    <header class="ob-header">
+      <a class="brand" href="/" aria-label="SaveApp">
+        <img src="/static/assets/images/logo.png" alt="SaveApp" width="164" height="41" />
+      </a>
+      <div class="ob-user">
+        {{> shared/avatar photo=user.photoUrl initials=user.initials size="sm"}}
+        <span class="ob-user-name">{{user.fullName}}</span>
+        <form method="post" action="/auth/logout">
+          <input type="hidden" name="_csrf" value="{{csrfToken}}" />
+          <button type="submit" class="btn btn-outline btn-sm">{{icon "log-out" size=14}} Sign out</button>
+        </form>
+      </div>
+    </header>
+
+    <div class="ob-shell">
+      <main class="ob-main">
+        {{> auth/alert}}
+        {{{body}}}
+      </main>
+
+      <aside class="ob-aside" aria-label="Onboarding progress">
+        <section class="card card-padded">
+          {{> onboarding/stepper}}
+        </section>
+        <section class="card card-padded ob-help">
+          <span class="tile">{{icon "life-buoy" size=18}}</span>
+          <p class="ob-help-title">Need a hand?</p>
+          <p class="ob-help-text">Write to us and the SaveApp team will help you through setup.</p>
+          <a class="btn btn-outline btn-sm" href="mailto:support@saveapp.co.ke">{{icon "mail" size=14}} Contact support</a>
+        </section>
+      </aside>
+    </div>
+    {{> shared/idle_dialog}}
+    <script src="/static/js/main.js" defer></script>
+  </body>
+</html>

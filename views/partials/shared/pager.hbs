@@ -1,0 +1,10 @@
+{{#if total}}
+  <div class="table-footer">
+    <span class="table-count">Showing {{from}}–{{to}} of {{total}}</span>
+    <nav class="pager-buttons" aria-label="Pagination">
+      {{#if hasPrev}}<a class="icon-btn icon-btn-sm" href="{{prevUrl}}" data-table-page aria-label="Previous page">{{icon "chevron-left" size=16}}</a>{{else}}<span class="icon-btn icon-btn-sm is-disabled" aria-hidden="true">{{icon "chevron-left" size=16}}</span>{{/if}}
+      <span class="pager-text">{{page}} / {{pages}}</span>
+      {{#if hasNext}}<a class="icon-btn icon-btn-sm" href="{{nextUrl}}" data-table-page aria-label="Next page">{{icon "chevron-right" size=16}}</a>{{else}}<span class="icon-btn icon-btn-sm is-disabled" aria-hidden="true">{{icon "chevron-right" size=16}}</span>{{/if}}
+    </nav>
+  </div>
+{{/if}}

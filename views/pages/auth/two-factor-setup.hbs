@@ -1,0 +1,26 @@
+<div class="auth-card">
+  <header class="auth-header">
+    <span class="auth-badge">{{icon "smartphone" size=22}}</span>
+    <h1 class="auth-title">Set up your authenticator app</h1>
+    <p class="auth-subtitle">Scan the QR code with the app, then enter the 6-digit code it shows.</p>
+  </header>
+
+  {{> auth/alert}}
+
+  <div class="setup-inline">
+    <img class="qr" src="{{setup.qrDataUrl}}" alt="QR code for your authenticator app" width="168" height="168" />
+    <div class="setup-inline-text">
+      <p class="field-label">Can't scan it?</p>
+      <p class="field-hint">Enter this key in the app and choose a time-based key.</p>
+      <div class="copy-field"><code>{{setup.secret}}</code></div>
+    </div>
+  </div>
+
+  <form method="post" action="/auth/two-factor/setup" class="auth-form" novalidate data-loading-form>
+    <input type="hidden" name="_csrf" value="{{csrfToken}}" />
+    {{> auth/otp error=errors.code}}
+    <button type="submit" class="btn btn-primary btn-block btn-lg" data-loading-text="Checking…">Turn on two-step verification</button>
+  </form>
+
+  <p class="auth-switch"><a class="link link-muted" href="/auth/continue">Skip for now</a></p>
+</div>

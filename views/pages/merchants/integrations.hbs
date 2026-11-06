@@ -1,0 +1,63 @@
+{{#> merchants/workspace}}
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Integrations</h1>
+      <p class="page-subtitle">{{merchant.name}}'s API keys, webhook endpoints and the events SaveApp sent. Read only: secrets are never shown.</p>
+    </div>
+  </div>
+
+  <div class="stack">
+    <section class="table-card">
+      <div class="card-head"><div><h2 class="card-title">API keys</h2><p class="card-subtitle">{{credentials.length}} key{{#unless (eq credentials.length 1)}}s{{/unless}}</p></div></div>
+      {{#if credentials.length}}
+        <div class="table-wrap">
+          <table class="table">
+            <thead><tr><th>Key</th><th>Scopes</th><th class="hide-md">Allowed IPs</th><th>Status</th><th class="hide-md">Last used</th></tr></thead>
+            <tbody>
+              {{#each credentials}}
+                <tr>
+                  <td><span class="entity-stack"><span class="entity-name">{{name}}</span><span class="entity-sub mono">{{hint}}… · created {{created}}</span></span></td>
+                  <td>{{#each scopes}}<span class="chip">{{this}}</span> {{/each}}</td>
+                  <td class="hide-md"><span class="entity-sub mono">{{#if ips}}{{ips}}{{else}}Any{{/if}}</span></td>
+                  <td>{{#if active}}{{> shared/status tone="success" label="Active" small=true}}{{else}}{{> shared/status tone="neutral" label="Off" small=true}}{{/if}}</td>
+                  <td class="hide-md">{{#if lastUsed}}{{lastUsed}}{{else}}<span class="muted">Never</span>{{/if}}</td>
+                </tr>
+              {{/each}}
+            </tbody>
+          </table>
+        </div>
+      {{else}}
+        {{> shared/empty icon="key-round" title="No API keys" text="The merchant hasn't created any API credentials yet."}}
+      {{/if}}
+    </section>
+
+    <section class="table-card">
+      <div class="card-head"><div><h2 class="card-title">Webhook endpoints</h2><p class="card-subtitle">Where SaveApp sends this merchant's card events</p></div></div>
+      {{#if webhooks.length}}
+        <div class="table-wrap">
+          <table class="table">
+            <thead><tr><th>Endpoint</th><th>Status</th><th>Last delivery</th></tr></thead>
+            <tbody>
+              {{#each webhooks}}
+                <tr>
+                  <td><span class="entity-sub url-text mono">{{url}}</span></td>
+                  <td>{{#if active}}{{> shared/status tone="success" label="Active" small=true}}{{else}}{{> shared/status tone="neutral" label="Paused" small=true}}{{/if}}</td>
+                  <td>{{#if lastDelivery}}<span class="entity-stack"><span>{{#if delivered}}{{> shared/status tone="success" label="Delivered" small=true}}{{else}}{{> shared/status tone="danger" label="Failed" small=true}}{{/if}}</span><span class="entity-sub">{{lastDelivery}}{{#if lastError}} · {{lastError}}{{/if}}</span></span>{{else}}<span class="muted">None yet</span>{{/if}}</td>
+                </tr>
+              {{/each}}
+            </tbody>
+          </table>
+        </div>
+      {{else}}
+        {{> shared/empty icon="webhook" title="No webhook endpoints" text="The merchant hasn't added an endpoint, so card events and payment codes have nowhere to go."}}
+      {{/if}}
+    </section>
+
+    <section class="table-card">
+      <div class="card-head"><div><h2 class="card-title">Event logs</h2><p class="card-subtitle">{{eventCounts.all}} sent · {{eventCounts.delivered}} delivered · {{eventCounts.failed}} failed (last month)</p></div></div>
+      <div id="events-table" class="data-table" data-table-url="{{eventsUrl}}">
+        {{> merchants/events_table}}
+      </div>
+    </section>
+  </div>
+{{/merchants/workspace}}

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    {{> shared/head}}
+    <meta name="csrf-token" content="{{csrfToken}}" />
+    <title>{{#if title}}{{title}} · {{/if}}{{portal.name}} · SaveApp</title>
+  </head>
+  <body class="portal portal-{{portal.key}}">
+    <div class="app">
+      {{> portal/sidebar}}
+      <div class="sidebar-backdrop" data-sidebar-close></div>
+      <div class="app-main">
+        {{> portal/topbar}}
+        <main class="content" id="content">
+          {{{body}}}
+        </main>
+      </div>
+    </div>
+
+    <div class="drawer" data-drawer aria-hidden="true">
+      <div class="drawer-backdrop" data-drawer-close></div>
+      <section class="drawer-panel" role="dialog" aria-modal="true" aria-labelledby="drawer-title" tabindex="-1">
+        <div class="drawer-body" data-drawer-body></div>
+      </section>
+    </div>
+
+    <dialog class="confirm" data-confirm-dialog aria-labelledby="confirm-title">
+      <form method="dialog" class="confirm-inner">
+        <span class="confirm-icon">{{icon "triangle-alert" size=20}}</span>
+        <h2 class="confirm-title" id="confirm-title" data-confirm-title>Are you sure?</h2>
+        <p class="confirm-text" data-confirm-text></p>
+        <div class="field confirm-note" data-confirm-note hidden>
+          <label class="field-label" for="confirm-note">Note to the business <span class="field-optional">(optional)</span></label>
+          <textarea id="confirm-note" class="textarea" rows="3" maxlength="500" placeholder="Included in the email we send"></textarea>
+        </div>
+        <div class="confirm-actions">
+          <button type="submit" value="cancel" class="btn btn-outline">Cancel</button>
+          <button type="submit" value="confirm" class="btn btn-danger" data-confirm-button>Delete</button>
+        </div>
+      </form>
+    </dialog>
+
+    {{> shared/idle_dialog}}
+
+    <div class="toast-stack" data-toast-stack aria-live="polite"></div>
+
+    {{#if flash}}
+      <div class="toast toast-{{flash.type}}" role="status" data-toast>
+        {{#if (eq flash.type "error")}}{{icon "circle-alert" size=18}}{{else if (eq flash.type "info")}}{{icon "info" size=18}}{{else}}{{icon "circle-check" size=18}}{{/if}}
+        <p>{{flash.message}}</p>
+        <button type="button" class="icon-btn icon-btn-ghost icon-btn-xs" data-toast-close aria-label="Dismiss">{{icon "x" size=14}}</button>
+      </div>
+    {{/if}}
+    <script src="/static/js/main.js" defer></script>
+  </body>
+</html>

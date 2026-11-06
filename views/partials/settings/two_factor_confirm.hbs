@@ -1,0 +1,20 @@
+<form class="drawer-form" method="post" action="{{action}}" data-ajax-form novalidate>
+  <header class="drawer-header">
+    <div>
+      <p class="eyebrow">Two-step verification</p>
+      <h2 class="drawer-title" id="drawer-title">{{#if regenerate}}New recovery codes{{else}}Turn off two-step verification{{/if}}</h2>
+      <p class="drawer-subtitle">{{#if regenerate}}Your current recovery codes stop working and you get eight new ones.{{else}}Signing in will only need your password again. Confirm it's you first.{{/if}}</p>
+    </div>
+    <button type="button" class="icon-btn icon-btn-ghost" data-drawer-close aria-label="Close">{{icon "x" size=18}}</button>
+  </header>
+  <div class="drawer-content">
+    {{#unless regenerate}}
+      {{> auth/password name="password" label="Your password" error=errors.password placeholder="Enter your password"}}
+    {{/unless}}
+    {{> auth/field name="code" label="Code from your authenticator app" inputmode="numeric" autocomplete="one-time-code" placeholder="123456" error=errors.code hint="Or use one of your recovery codes" autofocus=true}}
+  </div>
+  <footer class="drawer-footer">
+    <button type="button" class="btn btn-outline" data-drawer-close>Cancel</button>
+    <button type="submit" class="btn {{#if regenerate}}btn-primary{{else}}btn-danger{{/if}}" data-loading-text="Checking…">{{#if regenerate}}Create new codes{{else}}Turn off{{/if}}</button>
+  </footer>
+</form>

@@ -1,0 +1,33 @@
+{{#> portal/section}}
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Roles &amp; permissions</h1>
+      <p class="page-subtitle">Group permissions into roles, then give roles to people on your team.</p>
+    </div>
+  </div>
+
+  <div class="card roles-layout" data-roles data-base="{{base}}">
+    <aside class="roles-aside">
+      <div class="roles-aside-head">
+        <label class="input">
+          {{icon "search" size=16}}
+          <input type="search" placeholder="Search roles" aria-label="Search roles" data-role-search autocomplete="off" />
+        </label>
+        {{#if rights.create}}
+          <button type="button" class="btn btn-primary btn-block" data-drawer-url="{{base}}/new">{{icon "plus" size=16}} New role</button>
+        {{/if}}
+      </div>
+      <div id="roles-list" class="roles-list" data-table-url="{{base}}/list" data-history="off">
+        {{> roles/list}}
+      </div>
+    </aside>
+
+    <section id="role-detail" class="role-detail data-table" data-table-url="{{#if detail}}{{base}}/{{detail.role.id}}{{/if}}" data-history="off" aria-live="polite">
+      {{#if detail}}
+        {{#with detail}}{{> roles/detail base=../base}}{{/with}}
+      {{else}}
+        {{> roles/empty}}
+      {{/if}}
+    </section>
+  </div>
+{{/portal/section}}

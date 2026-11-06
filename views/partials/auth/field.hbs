@@ -1,0 +1,20 @@
+<div class="field{{#if error}} has-error{{/if}}">
+  <label class="field-label" for="{{name}}">{{label}}{{#if optional}} <span class="field-optional">(optional)</span>{{/if}}</label>
+  <div class="field-control">
+    {{#if icon}}{{icon icon size=16 class="field-icon"}}{{/if}}
+    <input id="{{name}}" name="{{name}}" type="{{#if type}}{{type}}{{else}}text{{/if}}" value="{{value}}"
+      {{#if autocomplete}}autocomplete="{{autocomplete}}"{{/if}}
+      {{#if placeholder}}placeholder="{{placeholder}}"{{/if}}
+      {{#if inputmode}}inputmode="{{inputmode}}"{{/if}}
+      {{#if maxlength}}maxlength="{{maxlength}}"{{/if}}
+      {{#if autofocus}}autofocus{{/if}}
+      {{#if disabled}}disabled{{/if}}
+      {{#unless optional}}required{{/unless}}
+      {{#if error}}aria-invalid="true" aria-describedby="{{name}}-error"{{/if}} />
+  </div>
+  {{#if error}}
+    <p class="field-error" id="{{name}}-error">{{error}}</p>
+  {{else if hint}}
+    <p class="field-hint">{{hint}}</p>
+  {{/if}}
+</div>

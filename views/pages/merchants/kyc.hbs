@@ -1,0 +1,76 @@
+{{#> merchants/workspace}}
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">KYC documents</h1>
+      <p class="page-subtitle">{{stageLabel}} · {{progress.provided}} of {{progress.required}} required items provided · {{progress.accepted}} accepted</p>
+    </div>
+  </div>
+
+  <div class="stack">
+    {{#if isDraft}}<div class="alert alert-info">{{icon "hourglass" size=16}}<span>{{merchant.name}} hasn't submitted its documents yet. You can look at what's there, but approval waits for their submission.</span></div>{{/if}}
+    {{#if reviewNote}}<div class="alert alert-info">{{icon "message-square" size=16}}<span><span class="alert-title">Last review note:</span> {{reviewNote}}</span></div>{{/if}}
+
+    <form method="post" action="{{base}}/kyc" data-ajax-form novalidate>
+      <section class="table-card">
+        <div class="table-wrap">
+          <table class="table">
+            <thead><tr><th>Requirement</th><th>Submission</th><th>{{#if canReview}}Decision{{else}}Status{{/if}}</th></tr></thead>
+            <tbody>
+              {{#each items}}
+                <tr data-review-item>
+                  <td>
+                    <span class="entity-stack">
+                      <span class="entity-name">{{name}}{{#unless required}} <span class="field-optional">(optional)</span>{{/unless}}</span>
+                      <span class="entity-sub">{{inputLabel}}{{#if help}} · {{help}}{{/if}}</span>
+                    </span>
+                  </td>
+                  <td>{{> kyc/submission}}</td>
+                  <td>
+                    {{#if (and submission @root.canReview)}}
+                      <div class="review-choice" role="radiogroup" aria-label="Decision for {{name}}">
+                        <label class="choice choice-accept"><input type="radio" name="decision_{{requirementId}}" value="Accepted" {{#if submission.isAccepted}}checked{{/if}} />{{icon "check" size=13}} Accept</label>
+                        <label class="choice choice-reject"><input type="radio" name="decision_{{requirementId}}" value="Rejected" {{#if submission.isRejected}}checked{{/if}} />{{icon "x" size=13}} Reject</label>
+                        {{#if submission.isPending}}<input type="hidden" name="decision_{{requirementId}}" value="Pending" data-pending-default />{{/if}}
+                      </div>
+                      <div class="review-comment" data-review-comment {{#unless submission.isRejected}}hidden{{/unless}}>
+                        <input type="text" name="comment_{{requirementId}}" value="{{submission.comment}}" maxlength="200" class="input-plain" placeholder="What needs to change? (sent to the merchant)" />
+                      </div>
+                    {{else}}
+                      {{> kyc/item_status}}
+                    {{/if}}
+                  </td>
+                </tr>
+              {{else}}
+                <tr><td colspan="3">{{> shared/empty icon="list-checks" title="No requirements for this country and level" text="Add them under Settings, Onboarding requirements."}}</td></tr>
+              {{/each}}
+              {{#each retired}}
+                <tr>
+                  <td><span class="entity-stack"><span class="entity-name">{{name}}</span><span class="entity-sub">No longer asked · doesn't affect approval</span></span></td>
+                  <td>{{> kyc/submission submission=this}}</td>
+                  <td>{{> kyc/item_status submission=this}}</td>
+                </tr>
+              {{/each}}
+            </tbody>
+          </table>
+        </div>
+        {{#if canReview}}
+          <div class="review-actions">
+            {{#if canDecide}}
+              <div class="field">
+                <label class="field-label" for="note">Note to the merchant <span class="field-optional">(needed to reject without marking an item)</span></label>
+                <textarea id="note" name="note" class="textarea" rows="2" maxlength="500" placeholder="Explain what needs to change"></textarea>
+              </div>
+            {{/if}}
+            <div class="review-buttons">
+              {{#if hasSubmissions}}<button type="submit" name="outcome" value="save" class="btn btn-outline" data-loading-text="Saving…">Save review</button>{{/if}}
+              {{#if canDecide}}
+                <button type="submit" name="outcome" value="reject" class="btn btn-danger-outline" data-loading-text="Sending back…">Reject and request changes</button>
+                <button type="submit" name="outcome" value="approve" class="btn btn-primary" data-loading-text="Approving…">{{icon "badge-check" size=15}} Approve business</button>
+              {{/if}}
+            </div>
+          </div>
+        {{/if}}
+      </section>
+    </form>
+  </div>
+{{/merchants/workspace}}

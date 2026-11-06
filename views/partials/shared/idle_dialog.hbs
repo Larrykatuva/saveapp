@@ -1,0 +1,26 @@
+{{!--
+  Shown on signed-in pages after {{idle.minutes}} minutes without activity.
+  It counts down {{idle.countdownSeconds}} seconds, then signs the user out
+  (public/js/main.js, "Idle sign-out").
+--}}
+<dialog class="confirm idle-dialog" data-idle-dialog data-idle-minutes="{{idle.minutes}}" data-idle-countdown="{{idle.countdownSeconds}}" aria-labelledby="idle-title" aria-describedby="idle-text">
+  <div class="confirm-inner">
+    <div class="idle-ring" aria-hidden="true">
+      <svg viewBox="0 0 120 120">
+        <circle class="idle-ring-track" cx="60" cy="60" r="52" />
+        <circle class="idle-ring-bar" cx="60" cy="60" r="52" data-idle-ring />
+      </svg>
+      <span class="idle-ring-count" data-idle-seconds>{{idle.countdownSeconds}}</span>
+    </div>
+    <h2 class="confirm-title" id="idle-title">Are you still there?</h2>
+    <p class="confirm-text" id="idle-text">You haven't done anything for {{idle.minutes}} minutes. For your security, we'll sign you out in <strong data-idle-seconds-text>{{idle.countdownSeconds}} seconds</strong>.</p>
+    <div class="confirm-actions">
+      <button type="button" class="btn btn-outline" data-idle-signout>Sign out now</button>
+      <button type="button" class="btn btn-primary" data-idle-stay>Stay signed in</button>
+    </div>
+  </div>
+  <form method="post" action="/auth/logout" data-idle-logout hidden>
+    <input type="hidden" name="_csrf" value="{{csrfToken}}" />
+    <input type="hidden" name="reason" value="idle" />
+  </form>
+</dialog>

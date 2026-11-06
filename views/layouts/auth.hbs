@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    {{> shared/head}}
+    <title>{{#if title}}{{title}} · {{/if}}SaveApp</title>
+  </head>
+  <body class="auth">
+    <div class="auth-shell">
+      <section class="auth-main">
+        <a class="brand" href="/auth/login" aria-label="SaveApp, sign in">
+          <img src="/static/assets/images/logo.png" alt="SaveApp" width="164" height="41" />
+        </a>
+
+        <div class="auth-content">
+          {{{body}}}
+        </div>
+
+        <footer class="auth-footer">
+          <span>© {{year}} SaveApp. All rights reserved.</span>
+          <nav>
+            <a href="https://saveapp.co.ke/site/" target="_blank" rel="noopener">saveapp.co.ke</a>
+            <a href="mailto:support@saveapp.co.ke">Support</a>
+          </nav>
+        </footer>
+      </section>
+
+      <aside class="auth-panel" aria-hidden="true">
+        <div class="auth-panel-inner">
+          <img class="auth-panel-mark" src="/static/assets/images/favicon.png" alt="" width="56" height="56" />
+          <h2 class="auth-panel-title">{{panelTitle}}</h2>
+          <p class="auth-panel-text">{{panelText}}</p>
+          <ul class="auth-panel-points">
+            <li>{{icon "shield-check" size=18}} Email-verified sign in</li>
+            <li>{{icon "file-check" size=18}} Business verification in a few steps</li>
+            <li>{{icon "users" size=18}} One login for every business you work with</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+    <script src="/static/js/main.js" defer></script>
+  </body>
+</html>

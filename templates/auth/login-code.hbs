@@ -1,0 +1,8 @@
+{{#> layout title="Your sign-in code"}}
+  <h1>Your sign-in code</h1>
+  <p>Hi {{name}},</p>
+  <p>Use this code to finish signing in to SaveApp.</p>
+  {{> code code=code}}
+  <p>This code expires in {{expiryMinutes}} minutes.</p>
+  <p class="muted">If you didn't try to sign in, someone may know your password. Change it from My account and turn on two-step verification with an authenticator app.</p>
+{{/layout}}

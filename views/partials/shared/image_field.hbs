@@ -1,0 +1,22 @@
+<div class="field{{#if error}} has-error{{/if}}">
+  <span class="field-label" id="{{#if fieldName}}{{fieldName}}{{else}}logo{{/if}}-label">{{label}} <span class="field-optional">(optional)</span></span>
+  <div class="image-field">
+    <label class="image-drop" data-dropzone data-max-bytes="2097152">
+      <input type="file" name="{{#if fieldName}}{{fieldName}}{{else}}logo{{/if}}" accept="image/png,image/jpeg,image/webp" aria-labelledby="{{#if fieldName}}{{fieldName}}{{else}}logo{{/if}}-label" />
+      <span class="image-thumb" data-thumb>
+        {{#if currentLogo}}<img src="{{currentLogo}}" alt="" />{{else}}{{icon "image-plus" size=20}}{{/if}}
+      </span>
+      <span class="image-meta">
+        <span class="dropzone-empty"><span class="image-cta"><strong>Upload image</strong> or drag it here</span><span class="dropzone-hint">PNG, JPG or WEBP up to 2 MB</span></span>
+        <span class="dropzone-file" hidden><span class="dropzone-meta"><span class="dropzone-name" data-file-name></span><span class="dropzone-size" data-file-size></span></span></span>
+      </span>
+    </label>
+    {{#if customLogo}}
+      <label class="checkbox-row">
+        <input type="checkbox" class="checkbox" name="{{#if removeName}}{{removeName}}{{else}}removeLogo{{/if}}" />
+        <span>{{removeLabel}}</span>
+      </label>
+    {{/if}}
+  </div>
+  {{#if error}}<p class="field-error">{{error}}</p>{{else}}<p class="field-hint">{{hint}}</p>{{/if}}
+</div>

@@ -1,0 +1,6 @@
+{{#if flash}}
+  <div class="alert alert-{{flash.type}}" role="{{#if (eq flash.type 'error')}}alert{{else}}status{{/if}}">
+    {{#if (eq flash.type "error")}}{{icon "circle-alert" size=16}}{{else if (eq flash.type "success")}}{{icon "circle-check" size=16}}{{else}}{{icon "info" size=16}}{{/if}}
+    <span>{{flash.message}}</span>
+  </div>
+{{/if}}

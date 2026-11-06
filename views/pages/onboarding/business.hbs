@@ -1,0 +1,23 @@
+<header class="auth-header">
+  <p class="eyebrow">Step 2 of 4</p>
+  <h1 class="auth-title">Set up your business</h1>
+  <p class="auth-subtitle">Hi {{firstName}}. Tell us about the business you're bringing to SaveApp. You can change these details later, except the country.</p>
+</header>
+
+{{#if formError}}<div class="alert alert-error">{{icon "circle-alert" size=16}}<span>{{formError}}</span></div>{{/if}}
+
+<form method="post" action="/onboarding/business?_csrf={{csrfToken}}" enctype="multipart/form-data" class="form-stack" novalidate data-loading-form>
+  {{> auth/field name="name" label="Business name" icon="building-2" value=values.name error=errors.name placeholder="e.g. Wanjiku Traders" autofocus=true}}
+  <div class="field-grid">
+    {{> auth/field name="email" label="Business email" type="email" icon="mail" value=values.email error=errors.email placeholder="hello@business.co.ke"}}
+    {{> auth/field name="phone" label="Business phone" type="tel" icon="phone" value=values.phone error=errors.phone inputmode="tel" placeholder="0712 345 678"}}
+  </div>
+  {{> auth/field name="address" label="Physical address" icon="map-pin" value=values.address error=errors.address placeholder="Building, street and town"}}
+  {{> shared/select name="country" label="Country" options=countries error=errors.country placeholder="Choose a country" hint="Decides which documents we ask for"}}
+  {{> shared/image_field label="Logo" error=errors.logo hint="Shown to your team in the portal. You can add it later."}}
+
+  <div class="page-actions">
+    <button type="submit" class="btn btn-primary btn-lg" data-loading-text="Saving…">Continue to onboarding {{icon "arrow-right" size=16}}</button>
+    {{#if hasAccounts}}<a class="btn btn-ghost btn-lg" href="/auth/accounts">Back to my accounts</a>{{/if}}
+  </div>
+</form>

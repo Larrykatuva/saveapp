@@ -1,0 +1,22 @@
+<header class="topbar">
+  <button type="button" class="icon-btn sidebar-toggle" data-sidebar-open aria-label="Open menu" aria-controls="sidebar">
+    {{icon "menu" size=18}}
+  </button>
+
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    {{#each breadcrumbs}}
+      {{#if @last}}
+        <span aria-current="page" title="{{label}}">{{label}}</span>
+      {{else}}
+        <span class="hide-sm">{{#if href}}<a href="{{href}}">{{label}}</a>{{else}}{{label}}{{/if}}</span>
+        <span class="hide-sm">{{icon "chevron-right" size=14}}</span>
+      {{/if}}
+    {{/each}}
+  </nav>
+
+  <div class="topbar-actions">
+    <a href="/auth/accounts" class="btn btn-ghost btn-sm hide-sm" title="Switch account">
+      {{icon "building-2" size=15}} {{account.name}}
+    </a>
+  </div>
+</header>

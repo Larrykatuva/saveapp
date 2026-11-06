@@ -1,0 +1,68 @@
+<div class="drawer-form">
+  <header class="drawer-header">
+    <div>
+      <p class="eyebrow">Card</p>
+      <h2 class="drawer-title" id="drawer-title">{{card.name}}</h2>
+      <p class="drawer-subtitle">{{card.mobile}} · Issued {{card.issued}}</p>
+    </div>
+    <button type="button" class="icon-btn icon-btn-ghost" data-drawer-close aria-label="Close">{{icon "x" size=18}}</button>
+  </header>
+
+  <div class="drawer-content">
+    <div class="plastic-stage">
+      {{#if (can "merchant.cards.reveal")}}
+        {{> cards/plastic name=card.name last4=card.last4 inactive=card.inactive revealUrl=revealUrl}}
+      {{else}}
+        {{> cards/plastic name=card.name last4=card.last4 inactive=card.inactive}}
+      {{/if}}
+      <div class="plastic-meta">{{> shared/status tone=card.tone label=card.status small=true}}<span class="entity-sub">{{card.maskedNumber}}</span></div>
+    </div>
+
+    {{#if revealUrl}}{{#if (can "merchant.cards.reveal")}}
+      <form class="reveal-panel" data-card-reveal-form hidden novalidate>
+        <p class="reveal-title">{{icon "shield-check" size=16}} Enter the code to see the full card details</p>
+        <p class="field-hint" data-reveal-message>We'll send a 6-digit code to you.</p>
+        <div class="reveal-row">
+          <input class="input reveal-code" name="code" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="000000" aria-label="One-time code" required />
+          <button type="submit" class="btn btn-primary" data-loading-text="Checking…">Show details</button>
+        </div>
+        <p class="field-error" data-reveal-error hidden></p>
+        <div class="reveal-actions">
+          <button type="button" class="link-button" data-reveal-resend>Send a new code</button>
+          <button type="button" class="link-button" data-reveal-cancel>Cancel</button>
+        </div>
+      </form>
+    {{/if}}{{/if}}
+
+    <section class="field">
+      <div class="field-label-row"><span class="field-label">Live from UnionPay</span></div>
+      <div class="live-box data-table" data-table-url="{{liveUrl}}" data-history="off" data-autoload>
+        <div class="skeleton"></div><div class="skeleton"></div><div class="skeleton skeleton-lg"></div>
+      </div>
+    </section>
+
+    <dl class="detail-rows">
+      {{#each details}}<div><dt>{{label}}</dt><dd>{{value}}</dd></div>{{/each}}
+    </dl>
+
+    <div class="field">
+      <span class="field-label">Activity</span>
+      {{#if logs.length}}
+        <ul class="activity">
+          {{#each logs}}
+            <li>
+              {{> shared/avatar photo=photo initials=initials size="sm"}}
+              <span class="entity-stack"><span class="entity-name">{{action}} <span class="entity-sub">· {{when}}</span></span><span class="entity-sub">{{description}}</span></span>
+            </li>
+          {{/each}}
+        </ul>
+      {{else}}
+        <p class="field-hint">Nothing yet.</p>
+      {{/if}}
+    </div>
+  </div>
+
+  <footer class="drawer-footer">
+    <button type="button" class="btn btn-outline" data-drawer-close>Close</button>
+  </footer>
+</div>

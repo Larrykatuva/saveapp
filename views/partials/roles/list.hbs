@@ -1,0 +1,24 @@
+{{#if roles.length}}
+  <ul class="role-items">
+    {{#each roles}}
+      <li>
+        <button type="button" class="role-item{{#if selected}} is-selected{{/if}}" data-role-id="{{id}}" data-role-name="{{name}}"{{#if selected}} aria-current="true"{{/if}}>
+          <span class="role-tile">{{initials}}</span>
+          <span class="role-item-text">
+            <span class="role-item-name">
+              <span class="role-name-text">{{name}}</span>
+              {{#if system}}<span class="badge">System</span>{{/if}}
+            </span>
+            <span class="role-item-meta">
+              <span class="status-dot{{#if active}} is-on{{/if}}" aria-hidden="true"></span>
+              {{permissionCount}} permission{{#unless (eq permissionCount 1)}}s{{/unless}}{{#if memberCount}} · {{memberCount}} {{#if (eq memberCount 1)}}person{{else}}people{{/if}}{{/if}}
+            </span>
+          </span>
+        </button>
+      </li>
+    {{/each}}
+  </ul>
+  <p class="roles-no-match" data-role-no-match hidden>No roles match your search</p>
+{{else}}
+  <p class="roles-no-match">No roles yet</p>
+{{/if}}

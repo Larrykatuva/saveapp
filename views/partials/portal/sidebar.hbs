@@ -1,0 +1,55 @@
+<aside class="sidebar" id="sidebar" aria-label="Main navigation">
+  <a class="sidebar-brand" href="{{portal.basePath}}" aria-label="SaveApp, go to Overview">
+    <img src="/static/assets/images/logo.png" alt="SaveApp" width="164" height="41" />
+  </a>
+
+  <div class="side-card">
+    {{#if sidebarBusiness}}
+      {{#if sidebarBusiness.logo}}<img class="tile" src="{{sidebarBusiness.logo}}" alt="" data-fallback="{{sidebarBusiness.initials}}" />{{else}}<span class="tile">{{sidebarBusiness.initials}}</span>{{/if}}
+      <div class="side-card-text">
+        <p class="side-card-name" title="{{sidebarBusiness.name}}">{{sidebarBusiness.name}}</p>
+        {{#unless (eq sidebarBusiness.status "Approved")}}
+          <p class="side-card-label">{{> shared/status tone=sidebarBusiness.tone label=sidebarBusiness.statusLabel small=true}}</p>
+        {{/unless}}
+      </div>
+    {{else}}
+      <span class="tile">{{icon "shield-user" size=18}}</span>
+      <div class="side-card-text">
+        <p class="side-card-label">Workspace</p>
+        <p class="side-card-name">SaveApp team</p>
+      </div>
+    {{/if}}
+  </div>
+
+  <nav class="nav" aria-label="{{portal.name}}">
+    {{#each navigation}}
+      <div class="nav-section">
+        {{#if title}}<p class="nav-title">{{title}}</p>{{/if}}
+        <ul>
+          {{#each items}}
+            <li>
+              <a href="{{href}}" class="nav-link{{#if active}} is-active{{/if}}"{{#if active}} aria-current="page"{{/if}}>
+                {{icon icon size=18}}
+                <span class="nav-label">{{label}}</span>
+                {{#if badge}}<span class="nav-badge">{{badge}}</span>{{/if}}
+              </a>
+            </li>
+          {{/each}}
+        </ul>
+      </div>
+    {{/each}}
+  </nav>
+
+  <div class="side-user">
+    {{> shared/avatar photo=user.photoUrl initials=user.initials size="sm"}}
+    <div class="side-user-text">
+      <p class="side-user-name">{{user.fullName}}</p>
+      <p class="side-user-meta" title="{{user.email}}">{{user.email}}</p>
+    </div>
+    <a class="icon-btn icon-btn-ghost icon-btn-xs" href="/auth/accounts" aria-label="Switch account" title="Switch account">{{icon "repeat" size=15}}</a>
+    <form method="post" action="/auth/logout">
+      <input type="hidden" name="_csrf" value="{{@root.csrfToken}}" />
+      <button type="submit" class="icon-btn icon-btn-ghost icon-btn-xs" aria-label="Sign out" title="Sign out">{{icon "log-out" size=15}}</button>
+    </form>
+  </div>
+</aside>

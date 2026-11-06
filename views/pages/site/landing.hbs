@@ -1,0 +1,148 @@
+<main>
+  <section class="hero">
+    <div class="site-wrap hero-inner">
+      <div class="hero-copy">
+        <p class="hero-eyebrow">{{icon "credit-card" size=15}} UnionPay cards, issued by you</p>
+        <h1 class="hero-title">Give every customer a card, straight from your own systems.</h1>
+        <p class="hero-text">SaveApp lets businesses anywhere in the world issue and manage prepaid UnionPay cards through a simple API, and keeps your team, verification and card activity in one merchant portal.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary btn-lg" href="/auth/register">Create a merchant account {{icon "arrow-right" size=16}}</a>
+          <a class="btn btn-outline btn-lg" href="/developers">{{icon "code-xml" size=16}} Read the developer guide</a>
+        </div>
+        <ul class="hero-points">
+          <li>{{icon "badge-check" size=16}} Business verification in four steps</li>
+          <li>{{icon "shield-check" size=16}} IP-whitelisted API keys</li>
+          <li>{{icon "webhook" size=16}} Signed webhooks for every card event</li>
+        </ul>
+      </div>
+
+      <div class="hero-visual" aria-hidden="true">
+        {{> cards/plastic name="Lawrence Katuva" last4="4321" extraClass="hero-card"}}
+        <div class="hero-code">
+          <div class="hero-code-bar"><span></span><span></span><span></span><em>Issue a card</em></div>
+<pre>curl -X POST {{apiBase}}/cards \
+  -H "Authorization: Bearer $TOKEN" \
+  -d '{"mobile":"0712345678",
+       "name":"Lawrence Katuva"}'
+
+<b>201</b> {
+  "reference": "CA-0009812",
+  "maskedNumber": "623401••••••4321",
+  "status": "Active"
+}</pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="site-section" id="partners">
+    <div class="site-wrap">
+      <p class="section-eyebrow">Our partners</p>
+      <h2 class="section-heading">Built with a bank, a card network and a payments partner</h2>
+      <div class="partner-grid">
+        <article class="partner">
+          <div class="partner-logo"><img src="/static/images/partners/unionpay.svg" alt="UnionPay" class="partner-logo-unionpay" /></div>
+          <p class="partner-role">Card network</p>
+          <p>Every SaveApp card is a UnionPay card, so your customers can pay wherever UnionPay is accepted.</p>
+        </article>
+        <article class="partner">
+          <div class="partner-logo"><img src="/static/images/partners/uba.svg" alt="UBA, United Bank for Africa" class="partner-logo-uba" /></div>
+          <p class="partner-role">Issuing bank</p>
+          <p>United Bank for Africa issues the prepaid UnionPay cards you give your customers.</p>
+        </article>
+        <article class="partner">
+          <div class="partner-logo"><img src="/static/images/partners/sasapay.svg" alt="SasaPay" class="partner-logo-sasapay" /></div>
+          <p class="partner-role">Card customer and wallet partner</p>
+          <p>SasaPay issues SaveApp UnionPay cards to its own customers through our API, and powers wallet as a service, coming soon to SaveApp.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="site-section" id="features">
+    <div class="site-wrap">
+      <p class="section-eyebrow">What you get</p>
+      <h2 class="section-heading">Everything you need to run cards for your customers</h2>
+      <div class="feature-grid">
+        <article class="feature">
+          <span class="tile tile-lg">{{icon "credit-card" size=20}}</span>
+          <h3>Cards API</h3>
+          <p>Issue a card to a mobile number, check its status, balance and transactions, block or replace it. All from your own app or back office.</p>
+        </article>
+        <article class="feature">
+          <span class="tile tile-lg">{{icon "webhook" size=20}}</span>
+          <h3>Webhooks with logs</h3>
+          <p>Get card transactions and one-time codes the moment UnionPay reports them, signed so you know they came from SaveApp. See a month of deliveries in the portal.</p>
+        </article>
+        <article class="feature">
+          <span class="tile tile-lg">{{icon "key-round" size=20}}</span>
+          <h3>Keys you control</h3>
+          <p>Create API keys per system, choose what each can do and which IP addresses may use it. Rotate or switch a key off and it stops working at once.</p>
+        </article>
+        <article class="feature">
+          <span class="tile tile-lg">{{icon "users" size=20}}</span>
+          <h3>Your whole team</h3>
+          <p>Invite colleagues, give them roles and decide exactly what each role can see and do. One login covers every business they work with.</p>
+        </article>
+        <article class="feature">
+          <span class="tile tile-lg">{{icon "file-check" size=20}}</span>
+          <h3>Guided verification</h3>
+          <p>Upload the documents your country needs and follow the review in the portal. If something needs fixing, you see exactly what and why.</p>
+        </article>
+        <article class="feature">
+          <span class="tile tile-lg">{{icon "lock-keyhole" size=20}}</span>
+          <h3>Safe by default</h3>
+          <p>Secrets are stored hashed, full card numbers are never stored, and one-time codes are masked in logs.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="site-section site-section-muted" id="how">
+    <div class="site-wrap">
+      <p class="section-eyebrow">How it works</p>
+      <h2 class="section-heading">From sign up to your first card</h2>
+      <ol class="how-steps">
+        <li><span class="how-number">1</span><h3>Create your account</h3><p>Sign up, verify your email and add your business details.</p></li>
+        <li><span class="how-number">2</span><h3>Get verified</h3><p>Upload your documents. The SaveApp team reviews them and approves your business.</p></li>
+        <li><span class="how-number">3</span><h3>Connect your systems</h3><p>Create an API key with an IP whitelist and add your webhook endpoint.</p></li>
+        <li><span class="how-number">4</span><h3>Issue cards</h3><p>Call the API to issue cards and follow every transaction through webhooks.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="site-section">
+    <div class="site-wrap dev-band">
+      <div>
+        <p class="section-eyebrow">For developers</p>
+        <h2 class="section-heading">A small API that does one job well</h2>
+        <p class="section-text">Exchange your client id and secret for a token, then call a handful of card endpoints. The developer guide walks through authentication, every endpoint, webhook signatures and going live.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="/developers">Open the developer guide</a>
+          <a class="btn btn-outline" href="/docs">API reference</a>
+        </div>
+      </div>
+      <ul class="dev-list">
+        <li><span class="code-chip">POST /auth/token</span> Get an access token</li>
+        <li><span class="code-chip">POST /cards</span> Issue a card</li>
+        <li><span class="code-chip">GET /card/:reference/balance</span> Live balance</li>
+        <li><span class="code-chip">GET /card/:reference/transactions</span> Card activity</li>
+        <li><span class="code-chip">POST /card/:reference/status</span> Block or unblock</li>
+        <li><span class="code-chip">card.transaction</span> Webhook on every card use</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="site-section">
+    <div class="site-wrap cta-band">
+      <div>
+        <h2>Ready to issue your first card?</h2>
+        <p>Create a merchant account and start verification today. Wallet as a service is on the way.</p>
+      </div>
+      <div class="hero-actions">
+        <a class="btn btn-lg cta-primary" href="/auth/register">Get started</a>
+        <a class="btn btn-lg cta-ghost" href="mailto:support@saveapp.co.ke">Talk to us</a>
+      </div>
+    </div>
+  </section>
+</main>

@@ -1,0 +1,18 @@
+<div class="live-grid">
+  <div class="live-item">
+    <span class="entity-sub">Status</span>
+    {{#if details}}{{> shared/status tone=details.tone label=details.status}}{{else}}<span class="muted" title="{{detailsError}}">Unavailable</span>{{/if}}
+  </div>
+  <div class="live-item">
+    <span class="entity-sub">Balance</span>
+    {{#if balance}}<span class="entity-name">{{balance.currency}} {{balance.balance}}</span>{{else}}<span class="muted" title="{{balanceError}}">Unavailable</span>{{/if}}
+  </div>
+  <div class="live-item">
+    <span class="entity-sub">Expiry</span>
+    {{#if details.expiry}}<span class="entity-name">{{details.expiry}}</span>{{else}}<span class="muted">Unknown</span>{{/if}}
+  </div>
+</div>
+{{#if detailsError}}<p class="field-hint">UnionPay: {{detailsError}}</p>{{/if}}
+
+<a class="btn btn-outline btn-sm mt-3" href="{{transactionsUrl}}">{{icon "arrow-left-right" size=14}} View this card's transactions</a>
+<p class="entity-sub mt-3">Checked {{checkedAt}}</p>

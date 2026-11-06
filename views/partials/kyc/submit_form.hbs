@@ -1,0 +1,31 @@
+<form class="drawer-form" method="post" action="{{action}}" {{#if isFile}}enctype="multipart/form-data"{{/if}} data-ajax-form novalidate>
+  <header class="drawer-header">
+    <div>
+      <p class="eyebrow">Onboarding</p>
+      <h2 class="drawer-title" id="drawer-title">{{requirement.name}}</h2>
+      <p class="drawer-subtitle">{{#if requirement.comment}}{{requirement.comment}}{{else}}The SaveApp team reviews it once you submit.{{/if}}</p>
+    </div>
+    <button type="button" class="icon-btn icon-btn-ghost" data-drawer-close aria-label="Close">{{icon "x" size=18}}</button>
+  </header>
+  <div class="drawer-content">
+    {{#if isFile}}
+      <div class="field{{#if errors.value}} has-error{{/if}}">
+        <span class="field-label" id="file-label">Document</span>
+        <label class="dropzone" data-dropzone data-max-bytes="5242880">
+          <input type="file" name="file" accept="{{acceptTypes}}" aria-labelledby="file-label" />
+          <span class="dropzone-empty"><span class="dropzone-icon">{{icon "cloud-upload" size=20}}</span><span class="dropzone-text"><strong>Click to upload</strong> or drag and drop</span><span class="dropzone-hint">JPG, PNG, WEBP or PDF up to 5 MB</span></span>
+          <span class="dropzone-file" hidden><span class="dropzone-thumb" data-thumb>{{icon "file-text" size=18}}</span><span class="dropzone-meta"><span class="dropzone-name" data-file-name></span><span class="dropzone-size" data-file-size></span></span><span class="dropzone-change">Change</span></span>
+        </label>
+        {{#if errors.value}}<p class="field-error">{{errors.value}}</p>{{/if}}
+      </div>
+    {{else if isNumber}}
+      {{> auth/field name="value" label=requirement.name value=value error=errors.value inputmode="decimal" autofocus=true}}
+    {{else}}
+      {{> auth/field name="value" label=requirement.name value=value error=errors.value maxlength="500" autofocus=true}}
+    {{/if}}
+  </div>
+  <footer class="drawer-footer">
+    <button type="button" class="btn btn-outline" data-drawer-close>Cancel</button>
+    <button type="submit" class="btn btn-primary" data-loading-text="Saving…">Save</button>
+  </footer>
+</form>

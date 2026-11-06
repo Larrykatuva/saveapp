@@ -1,0 +1,37 @@
+{{#> portal/section}}
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Event logs</h1>
+      <p class="page-subtitle">Every webhook SaveApp sent to your endpoints in the last month, newest first. Older logs are deleted automatically.</p>
+    </div>
+  </div>
+
+  <div class="tabs" role="tablist" aria-label="Filter by outcome">
+    {{#each tabs}}
+      <button type="button" role="tab" class="tab{{#if active}} is-active{{/if}}" data-table-tab="#events-table" data-param="status" data-value="{{value}}" aria-selected="{{#if active}}true{{else}}false{{/if}}">{{label}} <span class="tab-count">{{count}}</span></button>
+    {{/each}}
+  </div>
+
+  <div class="toolbar">
+    <label class="input input-search">
+      {{icon "search" size=16}}
+      <input type="search" name="q" value="{{q}}" placeholder="Search by event id, URL or content" aria-label="Search events" data-table-search="#events-table" autocomplete="off" />
+    </label>
+    <select name="event" class="select select-sm" aria-label="Event" data-table-filter="#events-table">
+      <option value="">All events</option>
+      {{#each events}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{value}}</option>{{/each}}
+    </select>
+    {{#if endpoints.length}}
+      <select name="webhook" class="select select-sm" aria-label="Endpoint" data-table-filter="#events-table">
+        <option value="">All endpoints</option>
+        {{#each endpoints}}<option value="{{id}}" {{#if selected}}selected{{/if}}>{{url}}</option>{{/each}}
+      </select>
+    {{/if}}
+  </div>
+
+  <section class="table-card">
+    <div id="events-table" class="data-table" data-table-url="/merchant/integrations/events/table">
+      {{> integrations/events_table}}
+    </div>
+  </section>
+{{/portal/section}}

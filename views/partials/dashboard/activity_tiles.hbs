@@ -1,0 +1,11 @@
+{{!-- Last-30-days tiles on the overviews: label, icon, value, sub, delta, href. --}}
+<div class="tiles overview-tiles">
+  {{#each tiles}}
+    <a class="stat" href="{{href}}">
+      <span class="stat-head"><span>{{label}}</span><span class="tile">{{icon icon size=16}}</span></span>
+      <span class="stat-value">{{value}}</span>
+      {{#if delta}}<span class="stat-delta stat-delta-{{delta.tone}}">{{delta.text}}</span>{{/if}}
+      {{#if sub}}<span class="stat-sub">{{sub}}</span>{{/if}}
+    </a>
+  {{/each}}
+</div>

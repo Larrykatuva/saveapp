@@ -1,0 +1,73 @@
+{{#> merchants/workspace}}
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Overview</h1>
+      <p class="page-subtitle">{{stageLabel}} · {{progress.accepted}} of {{progress.required}} required items accepted</p>
+    </div>
+    <div class="page-actions">
+      {{#if isReview}}<a class="btn btn-primary" href="{{base}}/kyc">{{icon "file-check" size=16}} Review documents</a>{{/if}}
+      {{#each actions}}
+        <button type="button" class="btn {{#if danger}}btn-danger-outline{{else}}btn-primary{{/if}}" data-confirm-url="{{../base}}/status" data-confirm-body='{"action":"{{key}}"}' data-confirm-title="{{label}} {{../merchant.name}}?" data-confirm-text="{{text}}" data-confirm-label="{{label}}" data-confirm-tone="{{#if danger}}danger{{else}}primary{{/if}}" data-confirm-note>{{label}}</button>
+      {{/each}}
+    </div>
+  </div>
+
+  {{#if activityTiles}}{{> dashboard/activity_tiles tiles=activityTiles}}{{/if}}
+  {{#if recent}}
+    <div class="stack overview-grid">
+      {{> dashboard/recent_transactions rows=recent seeAll=links.transactions cardsBase=links.cards owner="this merchant's cards"}}
+      {{#if health}}{{> dashboard/integration_health health=health integrationsUrl=links.integrations owner="The merchant's"}}{{/if}}
+    </div>
+  {{/if}}
+
+  <div class="stack">
+    {{#if reviewNote}}<div class="alert alert-info">{{icon "message-square" size=16}}<span><span class="alert-title">Last review note:</span> {{reviewNote}}</span></div>{{/if}}
+
+    <section class="card">
+      <div class="card-head"><div><h2 class="card-title">Business details</h2></div></div>
+      <div class="card-body">
+        <dl class="detail-rows">
+          {{#each details}}<div><dt>{{label}}</dt><dd>{{value}}</dd></div>{{/each}}
+        </dl>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-head">
+        <div>
+          <h2 class="card-title">Verification</h2>
+          <p class="card-subtitle">{{progress.provided}} of {{progress.required}} required items provided · {{progress.accepted}} accepted</p>
+        </div>
+        <a class="btn btn-outline btn-sm" href="{{base}}/kyc">Open documents</a>
+      </div>
+      <div class="card-body">
+        <div class="progress-row">
+          <span class="progress-bar{{#if progress.complete}} is-complete{{/if}}"><span style="width: {{progress.percent}}%"></span></span>
+          <span class="progress-text">{{progress.percent}}% provided</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="table-card">
+      <div class="card-head"><div><h2 class="card-title">People</h2><p class="card-subtitle">Everyone with access to this business</p></div></div>
+      {{#if members.length}}
+        <div class="table-wrap">
+          <table class="table">
+            <thead><tr><th>Name</th><th>Status</th><th class="hide-md">Joined</th></tr></thead>
+            <tbody>
+              {{#each members}}
+                <tr>
+                  <td><span class="entity"><span class="avatar avatar-sm">{{initials}}</span><span class="entity-stack"><span class="entity-name">{{name}}</span><span class="entity-sub">{{email}}</span></span></span></td>
+                  <td>{{#if active}}{{> shared/status tone="success" label="Active"}}{{else}}{{> shared/status tone="neutral" label="Inactive"}}{{/if}}</td>
+                  <td class="hide-md">{{joined}}</td>
+                </tr>
+              {{/each}}
+            </tbody>
+          </table>
+        </div>
+      {{else}}
+        {{> shared/empty icon="users" title="No people yet"}}
+      {{/if}}
+    </section>
+  </div>
+{{/merchants/workspace}}

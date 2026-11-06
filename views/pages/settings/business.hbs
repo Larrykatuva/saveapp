@@ -1,0 +1,14 @@
+{{#> portal/section}}
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Business profile</h1>
+      <p class="page-subtitle">How {{account.name}} appears on SaveApp.</p>
+    </div>
+  </div>
+
+  <section class="card">
+    <div class="card-body" id="business-form">
+      {{#with form}}{{> settings/business_form}}{{/with}}
+    </div>
+  </section>
+{{/portal/section}}

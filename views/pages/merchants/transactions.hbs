@@ -1,0 +1,34 @@
+{{#> merchants/workspace}}
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Transactions</h1>
+      <p class="page-subtitle">Every transaction UnionPay reports on {{merchant.name}}'s cards.</p>
+    </div>
+    <div class="page-actions">
+      {{#if syncedAt}}<span class="entity-sub">Updated {{syncedAt}}</span>{{/if}}
+      <form method="post" action="{{syncUrl}}" data-ajax-form data-refresh="#transactions-table"{{#if stale}} data-auto-submit{{/if}}>
+        <input type="hidden" name="_csrf" value="{{csrfToken}}" />
+        <button type="submit" class="btn btn-outline" data-loading-text="Checking UnionPay…">{{icon "refresh-cw" size=16}} Refresh from UnionPay</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="tabs" role="tablist" aria-label="Filter by status">
+    {{#each tabs}}
+      <button type="button" role="tab" class="tab{{#if active}} is-active{{/if}}" data-table-tab="#transactions-table" data-param="status" data-value="{{value}}" aria-selected="{{#if active}}true{{else}}false{{/if}}">{{label}} <span class="tab-count">{{count}}</span></button>
+    {{/each}}
+  </div>
+
+  <div class="toolbar">
+    <label class="input input-search">
+      {{icon "search" size=16}}
+      <input type="search" name="q" value="{{q}}" placeholder="Search by card, last digits, description, merchant or reference" aria-label="Search transactions" data-table-search="#transactions-table" autocomplete="off" />
+    </label>
+  </div>
+
+  <section class="table-card">
+    <div id="transactions-table" class="data-table" data-table-url="{{tableUrl}}">
+      {{> transactions/table}}
+    </div>
+  </section>
+{{/merchants/workspace}}

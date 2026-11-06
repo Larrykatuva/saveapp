@@ -1,0 +1,31 @@
+<div class="auth-card">
+  <header class="auth-header">
+    <h1 class="auth-title">Create your account</h1>
+    <p class="auth-subtitle">Start with your own details. You'll add your business next.</p>
+  </header>
+
+  {{> auth/alert}}
+
+  <form method="post" action="/auth/register" class="auth-form" novalidate data-loading-form>
+    <input type="hidden" name="_csrf" value="{{csrfToken}}" />
+    {{> auth/field name="fullName" label="Full name" icon="user-round" value=values.fullName error=errors.fullName autocomplete="name" placeholder="Jane Wanjiku" autofocus=true}}
+    <div class="field-grid">
+      {{> auth/field name="email" label="Email" type="email" icon="mail" value=values.email error=errors.email autocomplete="email" placeholder="you@business.co.ke"}}
+      {{> auth/field name="phoneNumber" label="Phone" type="tel" icon="phone" value=values.phoneNumber error=errors.phoneNumber autocomplete="tel" inputmode="tel" placeholder="0712 345 678"}}
+    </div>
+    {{> auth/password name="password" label="Password" error=errors.password autocomplete="new-password" placeholder="Create a password" strength=true hint=passwordHint}}
+    {{> auth/password name="confirmPassword" label="Confirm password" error=errors.confirmPassword autocomplete="new-password" placeholder="Repeat your password"}}
+
+    <div class="field{{#if errors.terms}} has-error{{/if}}">
+      <label class="checkbox-row">
+        <input type="checkbox" class="checkbox" name="terms" {{#if values.terms}}checked{{/if}} required />
+        <span>I agree to the SaveApp <a class="link" href="https://saveapp.co.ke/site/" target="_blank" rel="noopener">terms and privacy policy</a></span>
+      </label>
+      {{#if errors.terms}}<p class="field-error">{{errors.terms}}</p>{{/if}}
+    </div>
+
+    <button type="submit" class="btn btn-primary btn-block btn-lg" data-loading-text="Creating account…">Create account</button>
+  </form>
+
+  <p class="auth-switch">Already have an account? <a class="link" href="/auth/login">Sign in</a></p>
+</div>

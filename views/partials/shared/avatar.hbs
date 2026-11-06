@@ -1,0 +1,2 @@
+{{!-- A person's photo, or their initials when they have none (or it fails to load). Takes photo, initials and size (sm or lg). --}}
+{{#if photo}}<img class="avatar{{#if size}} avatar-{{size}}{{/if}}" src="{{photo}}" alt="" data-fallback="{{initials}}" />{{else}}<span class="avatar{{#if size}} avatar-{{size}}{{/if}}">{{initials}}</span>{{/if}}

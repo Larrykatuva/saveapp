@@ -1,0 +1,12 @@
+<form method="post" action="{{action}}" enctype="multipart/form-data" class="form-stack" data-ajax-form data-inline-form="#profile-form" novalidate>
+  <div class="entity">
+    {{> shared/avatar photo=photoUrl initials=initials size="lg"}}
+    <span class="entity-stack"><span class="entity-name">{{email}}</span><span class="entity-sub">Your sign in email can't be changed here</span></span>
+  </div>
+  <div class="field-grid">
+    {{> auth/field name="fullName" label="Full name" value=values.fullName error=errors.fullName autocomplete="name"}}
+    {{> auth/field name="phoneNumber" label="Phone" type="tel" value=values.phoneNumber error=errors.phoneNumber autocomplete="tel" inputmode="tel"}}
+  </div>
+  {{> shared/image_field label="Profile photo" fieldName="photo" removeName="removePhoto" error=errors.photo hint="Shown to your team in place of your initials. A square photo works best." removeLabel="Remove my photo"}}
+  <div><button type="submit" class="btn btn-primary" data-loading-text="Saving…">Save profile</button></div>
+</form>

@@ -1,0 +1,77 @@
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Welcome, {{firstName}}</h1>
+    <p class="page-subtitle">Finish verifying {{business.name}} to unlock the merchant portal.</p>
+  </div>
+</div>
+
+<div class="grid-2">
+  <div class="stack">
+    <section class="card status-card">
+      {{#if isDraft}}
+        <span class="tile">{{icon "file-up" size=20}}</span>
+        <div class="status-card-body">
+          <h2 class="status-card-title">Upload your verification documents</h2>
+          <p class="status-card-text">{{progress.provided}} of {{progress.required}} required items provided. Once everything is in, send it to the SaveApp team for review.</p>
+          <span class="progress-bar mt-3"><span style="width: {{progress.percent}}%"></span></span>
+          {{#if canVerify}}<div class="status-card-actions"><a class="btn btn-primary" href="/merchant/settings/onboarding">Continue onboarding {{icon "arrow-right" size=16}}</a></div>{{else}}<p class="status-card-text">Ask your business owner to finish onboarding.</p>{{/if}}
+        </div>
+      {{else if isReview}}
+        <span class="tile">{{icon "hourglass" size=20}}</span>
+        <div class="status-card-body">
+          <h2 class="status-card-title">We're reviewing your business</h2>
+          <p class="status-card-text">You submitted your documents on {{submitted}}. The SaveApp team is checking them and will email you the outcome.</p>
+          {{#if canVerify}}<div class="status-card-actions"><a class="btn btn-outline" href="/merchant/settings/onboarding">See what you sent</a></div>{{/if}}
+        </div>
+      {{else if isRejected}}
+        <span class="tile">{{icon "circle-alert" size=20}}</span>
+        <div class="status-card-body">
+          <h2 class="status-card-title">Some details need changes</h2>
+          <p class="status-card-text">The SaveApp team reviewed your documents and needs a few changes before approving {{business.name}}.</p>
+          {{#if reviewNote}}<div class="alert alert-info mt-3">{{icon "message-square" size=16}}<span><span class="alert-title">Note from the reviewer:</span> {{reviewNote}}</span></div>{{/if}}
+          {{#if rejectedItems.length}}
+            <ul class="issue-list">
+              {{#each rejectedItems}}<li><b>{{name}}</b>{{#if submission.comment}}: {{submission.comment}}{{/if}}</li>{{/each}}
+            </ul>
+          {{/if}}
+          {{#if canVerify}}<div class="status-card-actions"><a class="btn btn-primary" href="/merchant/settings/onboarding">Fix and resubmit {{icon "arrow-right" size=16}}</a></div>{{/if}}
+        </div>
+      {{else if isSuspended}}
+        <span class="tile">{{icon "circle-pause" size=20}}</span>
+        <div class="status-card-body">
+          <h2 class="status-card-title">Your business is suspended</h2>
+          <p class="status-card-text">Your team can't use the merchant portal right now. Contact SaveApp support to resolve this.</p>
+          <div class="status-card-actions"><a class="btn btn-outline" href="mailto:support@saveapp.co.ke">{{icon "mail" size=15}} Contact support</a></div>
+        </div>
+      {{/if}}
+    </section>
+
+    <section class="card">
+      <div class="card-head">
+        <div>
+          <h2 class="card-title">Checklist</h2>
+          <p class="card-subtitle">What SaveApp needs from {{business.name}}</p>
+        </div>
+      </div>
+      <div class="card-body">
+        <ul class="checklist">
+          <li><span class="check-mark is-done">{{icon "check" size=13}}</span><span class="checklist-name">Business details</span><a class="link link-sm" href="/merchant/settings/business">Edit</a></li>
+          {{#each checklist}}
+            <li>
+              <span class="check-mark{{#if submission.isRejected}} is-failed{{else if submission}} is-done{{/if}}">{{#if submission.isRejected}}{{icon "x" size=13}}{{else}}{{icon "check" size=13}}{{/if}}</span>
+              <span class="checklist-name">{{name}}{{#unless required}} <span class="field-optional">(optional)</span>{{/unless}}</span>
+              {{> kyc/item_status}}
+            </li>
+          {{/each}}
+        </ul>
+      </div>
+    </section>
+  </div>
+
+  <aside class="stack">
+    <section class="card card-padded">
+      <div class="section-head"><h2 class="card-title">Onboarding</h2></div>
+      {{> onboarding/stepper}}
+    </section>
+  </aside>
+</div>

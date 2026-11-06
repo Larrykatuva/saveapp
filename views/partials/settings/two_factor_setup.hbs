@@ -1,0 +1,33 @@
+<form class="drawer-form" method="post" action="{{action}}" data-ajax-form novalidate>
+  <header class="drawer-header">
+    <div>
+      <p class="eyebrow">Two-step verification</p>
+      <h2 class="drawer-title" id="drawer-title">Set up your authenticator app</h2>
+      <p class="drawer-subtitle">Google Authenticator, Microsoft Authenticator, 1Password or any app that supports time-based codes.</p>
+    </div>
+    <button type="button" class="icon-btn icon-btn-ghost" data-drawer-close aria-label="Close">{{icon "x" size=18}}</button>
+  </header>
+
+  <div class="drawer-content">
+    {{#if formError}}<div class="alert alert-error">{{icon "circle-alert" size=16}}<span>{{formError}}</span></div>{{/if}}
+    <ol class="setup-steps">
+      <li>
+        <p class="field-label">Scan this QR code with the app</p>
+        <img class="qr" src="{{setup.qrDataUrl}}" alt="QR code for your authenticator app" width="200" height="200" />
+      </li>
+      <li>
+        <p class="field-label">Can't scan it? Enter this key instead</p>
+        <div class="copy-field"><code>{{setup.secret}}</code><button type="button" class="btn btn-outline btn-sm" data-copy="{{setup.secret}}">{{icon "copy" size=14}} Copy</button></div>
+        <p class="field-hint">Choose a time-based key if the app asks.</p>
+      </li>
+      <li>
+        {{> auth/field name="code" label="Enter the 6-digit code the app shows" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="123456" error=errors.code autofocus=true}}
+      </li>
+    </ol>
+  </div>
+
+  <footer class="drawer-footer">
+    <button type="button" class="btn btn-outline" data-drawer-close>Cancel</button>
+    <button type="submit" class="btn btn-primary" data-loading-text="Checking…">Turn on</button>
+  </footer>
+</form>

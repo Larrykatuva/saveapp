@@ -1,0 +1,8 @@
+{{#> layout title="You're invited"}}
+  <h1>You've been invited</h1>
+  <p>Hi,</p>
+  <p>{{inviterName}} has invited you to join <strong>{{entityName}}</strong> on {{@appName}} as <strong>{{roleName}}</strong>.</p>
+  {{> button url=url label="Accept invitation"}}
+  <p>This invitation expires in {{expiryDays}} days.</p>
+  <p class="muted">If you weren't expecting this invitation, you can safely ignore this email.</p>
+{{/layout}}

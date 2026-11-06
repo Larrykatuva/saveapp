@@ -1,0 +1,40 @@
+{{#if requirements.length}}
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Requirement</th>
+          <th>Country</th>
+          <th class="hide-md">Merchant type</th>
+          <th class="hide-md">Answer</th>
+          <th>Required</th>
+          <th class="col-actions"><span class="sr-only">Actions</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each requirements}}
+          <tr>
+            <td><span class="entity-stack"><span class="entity-name">{{name}}</span>{{#if comment}}<span class="entity-sub">{{comment}}</span>{{/if}}</span></td>
+            <td><span class="entity">{{#if countryFlag}}<img class="flag" src="{{countryFlag}}" alt="" loading="lazy" />{{/if}}{{country}}</span></td>
+            <td class="hide-md">{{level}}</td>
+            <td class="hide-md"><span class="badge">{{input}}</span></td>
+            <td>{{#if required}}{{> shared/status tone="info" label="Required" small=true}}{{else}}{{> shared/status tone="neutral" label="Optional" small=true}}{{/if}}</td>
+            <td class="col-actions">
+              <div class="row-actions">
+                <button type="button" class="icon-btn icon-btn-ghost icon-btn-xs" data-drawer-url="/admin/settings/requirements/{{id}}/edit" aria-label="Edit {{name}}">{{icon "pencil" size=15}}</button>
+                <button type="button" class="icon-btn icon-btn-ghost icon-btn-xs icon-btn-danger" data-confirm-url="/admin/settings/requirements/{{id}}/delete" data-confirm-title="Delete {{name}}?" data-confirm-text="Merchants stop being asked for it. Answers already given stay on their records." aria-label="Delete {{name}}">{{icon "trash-2" size=15}}</button>
+              </div>
+            </td>
+          </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+  {{> shared/pager}}
+{{else}}
+  {{#if filtered}}
+    {{> shared/empty icon="search" title="No requirements match" text="Try another search, country or merchant type."}}
+  {{else}}
+    {{> shared/empty icon="list-checks" title="No requirements yet" text="Add what merchants must provide, such as a certificate of incorporation or a KRA PIN."}}
+  {{/if}}
+{{/if}}

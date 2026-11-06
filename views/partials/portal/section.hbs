@@ -1,0 +1,15 @@
+<div class="section-layout">
+  <nav class="section-nav" aria-label="{{sectionLabel}}">
+    <p class="section-nav-title">{{sectionLabel}}</p>
+    {{#each sectionNav}}
+      <a href="{{href}}" class="section-link{{#if active}} is-active{{/if}}"{{#if active}} aria-current="page"{{/if}}>
+        {{icon icon size=18}}
+        <span class="section-link-label">{{label}}</span>
+        {{#if (gt count -1)}}<span class="section-link-count">{{count}}</span>{{/if}}
+      </a>
+    {{/each}}
+  </nav>
+  <div class="section-content">
+    {{> @partial-block}}
+  </div>
+</div>

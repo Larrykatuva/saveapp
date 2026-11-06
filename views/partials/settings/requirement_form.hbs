@@ -1,0 +1,30 @@
+<form class="drawer-form" method="post" action="{{action}}" data-ajax-form data-refresh="#requirements-table" novalidate>
+  <header class="drawer-header">
+    <div>
+      <h2 class="drawer-title" id="drawer-title">{{#if editing}}Edit requirement{{else}}Add requirement{{/if}}</h2>
+      <p class="drawer-subtitle">Changes apply to new answers. What merchants already sent is kept as it was.</p>
+    </div>
+    <button type="button" class="icon-btn icon-btn-ghost" data-drawer-close aria-label="Close">{{icon "x" size=18}}</button>
+  </header>
+
+  <div class="drawer-content">
+    {{#if hasErrors}}<div class="alert alert-error">{{icon "circle-alert" size=16}}<span>Please fix the highlighted fields.</span></div>{{/if}}
+    {{> auth/field name="name" label="Name" value=values.name error=errors.name placeholder="e.g. Certificate of incorporation" autofocus=true}}
+    <div class="field-grid">
+      {{> shared/select name="country" label="Country" options=countries error=errors.country placeholder="Choose a country"}}
+      {{> shared/select name="level" label="Merchant type" options=levels error=errors.level}}
+    </div>
+    {{> shared/select name="input" label="What they provide" options=inputs error=errors.input}}
+    <div class="field{{#if errors.comment}} has-error{{/if}}">
+      <label class="field-label" for="comment">Guidance <span class="field-optional">(optional)</span></label>
+      <textarea id="comment" name="comment" class="textarea" rows="3" maxlength="300" placeholder="Shown to the merchant, e.g. A clear scan of all pages">{{values.comment}}</textarea>
+      {{#if errors.comment}}<p class="field-error">{{errors.comment}}</p>{{/if}}
+    </div>
+    {{> shared/switch_field name="required" label="Required" hint="Merchants can't submit without it" checked=values.required}}
+  </div>
+
+  <footer class="drawer-footer">
+    <button type="button" class="btn btn-outline" data-drawer-close>Cancel</button>
+    <button type="submit" class="btn btn-primary" data-loading-text="Saving…">{{#if editing}}Save changes{{else}}Add requirement{{/if}}</button>
+  </footer>
+</form>

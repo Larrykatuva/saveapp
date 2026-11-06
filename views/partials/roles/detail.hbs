@@ -1,0 +1,86 @@
+<div class="role-detail-inner" data-role-detail="{{role.id}}">
+  <header class="role-header">
+    <div class="role-heading">
+      <span class="role-tile role-tile-lg">{{role.initials}}</span>
+      <div>
+        <div class="role-title-row">
+          <h2 class="role-title">{{role.name}}</h2>
+          {{#if role.system}}<span class="badge">System role</span>{{/if}}
+        </div>
+        <p class="role-meta">
+          <span>Level: <b>{{levelLabel}}</b></span>
+          <span class="dot-sep">·</span>
+          <span>{{assignedCount}} of {{totalCount}} permissions</span>
+          {{#if role.memberCount}}<span class="dot-sep">·</span><span>{{role.memberCount}} {{#if (eq role.memberCount 1)}}person{{else}}people{{/if}}</span>{{/if}}
+        </p>
+        {{#if role.description}}<p class="role-description">{{role.description}}</p>{{/if}}
+      </div>
+    </div>
+
+    <div class="role-actions">
+      {{#if canUpdate}}
+        <label class="switch-inline">
+          <span class="switch">
+            <input type="checkbox" data-toggle-url="{{base}}/{{role.id}}/toggle" data-refresh="#roles-list" {{#if role.active}}checked{{/if}} aria-label="{{role.name}} active" />
+            <span class="switch-track"><span class="switch-thumb"></span></span>
+          </span>
+          <span>Active</span>
+        </label>
+        <button type="button" class="icon-btn" data-drawer-url="{{base}}/{{role.id}}/edit" aria-label="Edit {{role.name}}" title="Edit role">{{icon "pencil" size=16}}</button>
+        <button type="button" class="icon-btn icon-btn-danger" data-confirm-url="{{base}}/{{role.id}}/delete" data-refresh="#roles-list" data-confirm-title="Delete {{role.name}}?" data-confirm-text="{{#if role.memberCount}}{{role.memberCount}} people with this role will lose its permissions. {{/if}}This can't be undone." aria-label="Delete {{role.name}}" title="Delete role">{{icon "trash-2" size=16}}</button>
+      {{else}}
+        <span class="role-status{{#if role.active}} is-on{{/if}}"><span class="status-dot{{#if role.active}} is-on{{/if}}"></span>{{#if role.active}}Active{{else}}Inactive{{/if}}</span>
+      {{/if}}
+    </div>
+  </header>
+
+  {{#if role.system}}
+    <div class="alert alert-info role-lock">
+      {{icon "lock" size=16}}
+      <span>System roles are set by SaveApp and can't be edited. Create a custom role if you need a different set of permissions.</span>
+    </div>
+  {{/if}}
+
+  <section class="card perm-card">
+    <div class="perm-card-head">
+      <div>
+        <h3 class="card-title">Assigned permissions</h3>
+        <p class="card-subtitle">People with this role can take these actions in the portal.</p>
+      </div>
+      {{#if canPermissions}}
+        {{#if groups.length}}<button type="button" class="btn btn-outline btn-sm" data-drawer-url="{{base}}/{{role.id}}/permissions">{{icon "plus" size=14}} Add permissions</button>{{/if}}
+      {{/if}}
+    </div>
+
+    <div class="perm-card-body">
+      {{#if groups.length}}
+        {{#each groups}}
+          <div class="perm-group">
+            <p class="perm-group-title">{{group}} <span class="perm-group-count">{{items.length}}</span></p>
+            <ul class="perm-list">
+              {{#each items}}
+                <li class="perm-row">
+                  <span class="perm-check">{{icon "check" size=13}}</span>
+                  <span class="perm-name">{{description}}</span>
+                  {{#if internal}}<span class="badge">Internal</span>{{/if}}
+                  {{#if ../../canPermissions}}
+                    <button type="button" class="icon-btn icon-btn-ghost icon-btn-xs icon-btn-danger perm-remove" data-post-url="{{../../base}}/{{../../role.id}}/permissions/{{id}}/remove" data-refresh="#roles-list" aria-label="Remove {{description}}" title="Remove permission">{{icon "x" size=14}}</button>
+                  {{/if}}
+                </li>
+              {{/each}}
+            </ul>
+          </div>
+        {{/each}}
+      {{else}}
+        <div class="empty-state perm-empty">
+          <span class="empty-icon">{{icon "shield" size=20}}</span>
+          <p class="empty-title">No permissions yet</p>
+          <p class="empty-text">Add permissions to control what people with the <b>{{role.name}}</b> role can do.</p>
+          {{#if canPermissions}}
+            <button type="button" class="btn btn-primary btn-sm" data-drawer-url="{{base}}/{{role.id}}/permissions">{{icon "plus" size=14}} Add first permission</button>
+          {{/if}}
+        </div>
+      {{/if}}
+    </div>
+  </section>
+</div>

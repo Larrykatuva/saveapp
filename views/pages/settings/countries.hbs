@@ -1,0 +1,24 @@
+{{#> portal/section}}
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Countries</h1>
+      <p class="page-subtitle">Where SaveApp works. Merchants pick one when they sign up, and it decides their onboarding requirements.</p>
+    </div>
+    <div class="page-actions">
+      <button type="button" class="btn btn-primary" data-drawer-url="/admin/settings/countries/new">{{icon "plus" size=16}} Add country</button>
+    </div>
+  </div>
+
+  <div class="toolbar">
+    <label class="input input-search">
+      {{icon "search" size=16}}
+      <input type="search" name="q" value="{{q}}" placeholder="Search by name or code" aria-label="Search countries" data-table-search="#countries-table" autocomplete="off" />
+    </label>
+  </div>
+
+  <section class="table-card">
+    <div id="countries-table" class="data-table" data-table-url="/admin/settings/countries/table">
+      {{> settings/countries_table}}
+    </div>
+  </section>
+{{/portal/section}}

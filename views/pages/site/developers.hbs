@@ -1,0 +1,555 @@
+<main class="docs-hero">
+  <div class="site-wrap">
+    <p class="hero-eyebrow">{{icon "code-xml" size=15}} Developer guide</p>
+    <h1 class="docs-title">Integrate SaveApp cards</h1>
+    <p class="docs-lead">Everything you need to issue UnionPay cards from your own systems: credentials, access tokens, the card endpoints, webhooks and going live. Prefer to explore? Open the <a class="link" href="{{docsUrl}}">API reference</a>.</p>
+  </div>
+</main>
+
+<div class="site-wrap docs-shell">
+  <aside class="docs-toc" aria-label="On this page">
+    <p class="docs-toc-title">On this page</p>
+    <nav data-docs-toc>
+      <a href="#overview">Overview</a>
+      <a href="#credentials">1. Create credentials</a>
+      <a href="#token">2. Get an access token</a>
+      <a href="#calls">3. Call the API</a>
+      <a href="#reference">API reference</a>
+      <a class="toc-sub" href="#ep-token">POST /auth/token</a>
+      <a class="toc-sub" href="#ep-list">GET /cards</a>
+      <a class="toc-sub" href="#ep-create">POST /cards</a>
+      <a class="toc-sub" href="#ep-get">GET /card/:reference</a>
+      <a class="toc-sub" href="#ep-details">GET …/details</a>
+      <a class="toc-sub" href="#ep-full">POST …/details</a>
+      <a class="toc-sub" href="#ep-full-verify">POST …/details/verify</a>
+      <a class="toc-sub" href="#ep-balance">GET …/balance</a>
+      <a class="toc-sub" href="#ep-transactions">GET …/transactions</a>
+      <a class="toc-sub" href="#ep-status">POST …/status</a>
+      <a class="toc-sub" href="#ep-replace">POST …/replace</a>
+      <a href="#card-object">The card object</a>
+      <a href="#webhooks">Webhooks</a>
+      <a href="#signatures">Verify signatures</a>
+      <a href="#errors">Errors</a>
+      <a href="#live">Going live checklist</a>
+    </nav>
+  </aside>
+
+  <article class="docs-body">
+    <section id="overview" class="docs-section">
+      <h2>Overview</h2>
+      <p>The SaveApp merchant API lets an approved business issue prepaid UnionPay cards to its customers and follow what happens to them. Everything is scoped to your business: you only ever see your own cards.</p>
+      <div class="docs-callouts">
+        <div class="docs-callout"><span class="tile">{{icon "globe" size=16}}</span><div><p class="docs-callout-title">Base URL</p><p><code>{{apiBase}}</code></p></div></div>
+        <div class="docs-callout"><span class="tile">{{icon "clock" size=16}}</span><div><p class="docs-callout-title">Tokens</p><p>Bearer tokens that last {{tokenMinutes}} minutes</p></div></div>
+        <div class="docs-callout"><span class="tile">{{icon "braces" size=16}}</span><div><p class="docs-callout-title">Format</p><p>JSON in, JSON out</p></div></div>
+      </div>
+      <p>Before you start, your business must be <strong>approved</strong> on SaveApp. Sign in to the merchant portal and finish Settings › Onboarding if you haven't yet.</p>
+    </section>
+
+    <section id="credentials" class="docs-section">
+      <h2>1. Create credentials</h2>
+      <p>In the merchant portal go to <strong>Integrations › Credentials</strong> and choose <strong>New credential</strong>.</p>
+      <ol class="docs-steps">
+        <li><strong>Name it</strong> after the system that will use it, for example "Production server".</li>
+        <li><strong>Choose scopes.</strong> <em>Cards</em> lets the key use every card endpoint. Wallet as a service is coming later.</li>
+        <li><strong>Add the IP addresses</strong> your servers call from, one per line. Only these addresses can get tokens and call the API.</li>
+      </ol>
+      <p>You'll see the <code>client_id</code> and <code>client_secret</code> once. Store them in your secrets manager straight away; SaveApp keeps only a hash and can't show them again. If you lose the secret, rotate it from the credential's panel.</p>
+      <div class="docs-note">{{icon "info" size=16}}<p>Only people whose role includes "Create and manage API credentials" can create keys. By default that's the business Owner.</p></div>
+    </section>
+
+    <section id="token" class="docs-section">
+      <h2>2. Get an access token</h2>
+      <p>Exchange the client id and secret for a token. Request a new one when it expires; there's no refresh token.</p>
+      <div class="code-tabs" data-code-tabs>
+        <div class="code-tabs-bar" role="tablist">
+          <button type="button" class="is-active" data-code-tab="curl">cURL</button>
+          <button type="button" data-code-tab="node">Node.js</button>
+          <button type="button" data-code-tab="python">Python</button>
+        </div>
+<pre data-code-panel="curl">curl -X POST {{apiBase}}/auth/token \
+  -H "Content-Type: application/json" \
+  -d '{"client_id": "sa_…", "client_secret": "sas_…"}'</pre>
+<pre data-code-panel="node" hidden>const res = await fetch('{{apiBase}}/auth/token', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    client_id: process.env.SAVEAPP_CLIENT_ID,
+    client_secret: process.env.SAVEAPP_CLIENT_SECRET,
+  }),
+});
+const { access_token, expires_in } = await res.json();</pre>
+<pre data-code-panel="python" hidden>import os, requests
+
+res = requests.post("{{apiBase}}/auth/token", json={
+    "client_id": os.environ["SAVEAPP_CLIENT_ID"],
+    "client_secret": os.environ["SAVEAPP_CLIENT_SECRET"],
+})
+token = res.json()["access_token"]</pre>
+      </div>
+      <p>The answer:</p>
+<pre class="docs-code">{
+  "access_token": "eyJhbGciOiJIUzI1NiIs…",
+  "token_type": "Bearer",
+  "expires_in": 3600,
+  "scopes": ["Card"]
+}</pre>
+      <div class="docs-note docs-note-warn">{{icon "triangle-alert" size=16}}<p>Five wrong secrets for the same client id lock it for 15 minutes. Calls from an address that isn't on the whitelist get <code>403</code>.</p></div>
+    </section>
+
+    <section id="calls" class="docs-section">
+      <h2>3. Call the API</h2>
+      <p>Send the token in the <code>Authorization</code> header on every call. Each call checks that the token is valid, the credential is still active, your business is approved, the call comes from a whitelisted IP, and the credential has the endpoint's scope. Switching a credential off in the portal blocks its tokens immediately.</p>
+      <table class="docs-table">
+        <thead><tr><th>Convention</th><th>Details</th></tr></thead>
+        <tbody>
+          <tr><td>Base URL</td><td><code>{{apiBase}}</code></td></tr>
+          <tr><td>Headers</td><td><code>Authorization: Bearer &lt;access_token&gt;</code> on every call except the token call; <code>Content-Type: application/json</code> on calls with a body.</td></tr>
+          <tr><td>Card ids</td><td>Cards are addressed by their <code>reference</code> (the UnionPay card alias), e.g. <code>/card/41000002</code>.</td></tr>
+          <tr><td>Amounts</td><td>Kenya shillings (<code>KES</code>) as numbers in shillings, e.g. <code>1250.5</code>.</td></tr>
+          <tr><td>Dates</td><td>ISO 8601 in UTC, e.g. <code>2026-11-06T08:38:23.904Z</code>. Date filters use <code>YYYY-MM-DD</code>.</td></tr>
+          <tr><td>Mobile numbers</td><td><code>0712345678</code>, <code>254712345678</code> or <code>+254712345678</code>; SaveApp stores <code>2547XXXXXXXX</code>.</td></tr>
+          <tr><td>Pagination</td><td><code>page</code> (from 1) and <code>pageSize</code> (default 10, max 50). Lists answer <code>{ page, pageSize, count, data }</code> where <code>count</code> is the total.</td></tr>
+          <tr><td>Unknown fields</td><td>Ignored. Missing or invalid fields give <code>400</code> with a list of problems in <code>message</code>.</td></tr>
+        </tbody>
+      </table>
+<pre class="docs-code">curl {{apiBase}}/cards \
+  -H "Authorization: Bearer $TOKEN"</pre>
+    </section>
+
+    <section id="reference" class="docs-section">
+      <h2>API reference</h2>
+      <p>Every endpoint, what it expects and what it returns. All card endpoints need a credential with the <strong>Cards</strong> scope and only ever see your business's cards.</p>
+
+      <div class="endpoint" id="ep-token">
+        <div class="endpoint-head"><span class="method method-post">POST</span><code>/auth/token</code><span>Get an access token</span></div>
+        <p>Exchanges a credential for a token that lasts {{tokenMinutes}} minutes. No <code>Authorization</code> header. Must come from an IP on the credential's whitelist.</p>
+        <h4>Body</h4>
+        <table class="docs-table">
+          <thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td><code>client_id</code></td><td>string</td><td>Yes</td><td>Starts with <code>sa_</code></td></tr>
+            <tr><td><code>client_secret</code></td><td>string</td><td>Yes</td><td>Starts with <code>sas_</code></td></tr>
+          </tbody>
+        </table>
+        <h4>Response <span class="status-code">200</span></h4>
+        <table class="docs-table">
+          <tbody>
+            <tr><td><code>access_token</code></td><td>string</td><td>Send as <code>Authorization: Bearer …</code></td></tr>
+            <tr><td><code>token_type</code></td><td>string</td><td>Always <code>Bearer</code></td></tr>
+            <tr><td><code>expires_in</code></td><td>number</td><td>Seconds until it expires (3600)</td></tr>
+            <tr><td><code>scopes</code></td><td>string[]</td><td>What the credential can do, e.g. <code>["Card"]</code></td></tr>
+          </tbody>
+        </table>
+        <h4>Errors</h4>
+        <ul class="docs-errors">
+          <li><code>400</code> <code>client_id</code> or <code>client_secret</code> missing</li>
+          <li><code>401</code> Invalid client credentials, or the credential is switched off</li>
+          <li><code>403</code> IP not on the whitelist, business not approved, no whitelist in production, or five wrong secrets in 15 minutes</li>
+        </ul>
+      </div>
+
+      <div class="endpoint" id="ep-list">
+        <div class="endpoint-head"><span class="method method-get">GET</span><code>/cards</code><span>List cards</span></div>
+        <p>Your cards, newest first.</p>
+        <h4>Query parameters</h4>
+        <table class="docs-table">
+          <thead><tr><th>Name</th><th>Type</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td><code>page</code></td><td>integer</td><td>Default 1</td></tr>
+            <tr><td><code>pageSize</code></td><td>integer</td><td>Default 10, max 50</td></tr>
+            <tr><td><code>status</code></td><td>string</td><td><code>Active</code>, <code>Blocked</code>, <code>Terminated</code> or <code>Replaced</code></td></tr>
+            <tr><td><code>mobile</code></td><td>string</td><td>Only the cards of this cardholder</td></tr>
+          </tbody>
+        </table>
+<pre class="docs-code">curl "{{apiBase}}/cards?status=Active&amp;pageSize=20" \
+  -H "Authorization: Bearer $TOKEN"</pre>
+        <h4>Response <span class="status-code">200</span></h4>
+<pre class="docs-code">{
+  "page": 1,
+  "pageSize": 20,
+  "count": 12,
+  "data": [ { "reference": "41000002", "name": "Achieng Otieno", "status": "Active", … } ]
+}</pre>
+        <p class="docs-small">Each item is a <a class="link" href="#card-object">card object</a>.</p>
+      </div>
+
+      <div class="endpoint" id="ep-create">
+        <div class="endpoint-head"><span class="method method-post">POST</span><code>/cards</code><span>Issue a card</span></div>
+        <p>Registers the mobile number as a cardholder with UnionPay the first time it's used, then issues a new card to them. A cardholder can hold several cards.</p>
+        <h4>Body</h4>
+        <table class="docs-table">
+          <thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td><code>mobile</code></td><td>string</td><td>Yes</td><td>Cardholder's Kenyan mobile number</td></tr>
+            <tr><td><code>name</code></td><td>string</td><td>Yes</td><td>Name on the card, up to 80 characters</td></tr>
+            <tr><td><code>description</code></td><td>string</td><td>No</td><td>Your note, up to 300 characters</td></tr>
+          </tbody>
+        </table>
+<pre class="docs-code">curl -X POST {{apiBase}}/cards \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"mobile": "0712345678", "name": "Jane Wanjiku", "description": "Payout card"}'</pre>
+        <h4>Response <span class="status-code">201</span></h4>
+        <p class="docs-small">The new <a class="link" href="#card-object">card object</a>.</p>
+        <h4>Errors</h4>
+        <ul class="docs-errors">
+          <li><code>400</code> Invalid mobile or name, or UnionPay refused to register the cardholder or create the card (its message is passed on)</li>
+          <li><code>502</code> UnionPay could not be reached; nothing was created, so you can retry</li>
+        </ul>
+      </div>
+
+      <div class="endpoint" id="ep-get">
+        <div class="endpoint-head"><span class="method method-get">GET</span><code>/card/:reference</code><span>Get a card</span></div>
+        <p>The card as SaveApp stores it (no call to UnionPay, so it's fast).</p>
+        <h4>Path parameters</h4>
+        <table class="docs-table"><tbody><tr><td><code>reference</code></td><td>string</td><td>The card's reference</td></tr></tbody></table>
+        <h4>Response <span class="status-code">200</span></h4>
+        <p class="docs-small">A <a class="link" href="#card-object">card object</a>. <code>404</code> when the card isn't yours or doesn't exist.</p>
+      </div>
+
+      <div class="endpoint" id="ep-details">
+        <div class="endpoint-head"><span class="method method-get">GET</span><code>/card/:reference/details</code><span>Live details</span></div>
+        <p>Asks UnionPay for the card's current status and expiry. SaveApp also updates its stored status if UnionPay reports a change.</p>
+        <h4>Response <span class="status-code">200</span></h4>
+<pre class="docs-code">{
+  "reference": "41000002",
+  "maskedNumber": "623401••••••4321",
+  "expiry": "12/29",
+  "status": "Active"
+}</pre>
+      </div>
+
+      <div class="endpoint" id="ep-full">
+        <div class="endpoint-head"><span class="method method-post">POST</span><code>/card/:reference/details</code><span>Full details, step 1: send the code</span></div>
+        <p>Starts the second check for the card's full number, expiry and CVV. SaveApp sends a 6-digit code to your active webhook endpoints as a <a class="link" href="#webhooks"><code>card.details_otp</code></a> event and answers with a <code>challengeId</code>. The code is valid for 5 minutes, and asking again replaces the previous code. You need at least one active webhook endpoint.</p>
+<pre class="docs-code">curl -X POST {{apiBase}}/card/41000002/details \
+  -H "Authorization: Bearer $TOKEN"</pre>
+        <h4>Response <span class="status-code">202</span></h4>
+<pre class="docs-code">{
+  "challengeId": "chl_9f3c0b6e2d1a4c7b8e5f60a1b2c3d4e5",
+  "expiresAt": "2026-11-06T09:05:00.000Z",
+  "expiresIn": 300,
+  "sentTo": 1
+}</pre>
+        <h4>Errors</h4>
+        <ul class="docs-errors">
+          <li><code>400</code> The card is terminated or replaced</li>
+          <li><code>409</code> No active webhook endpoint to send the code to</li>
+          <li><code>429</code> More than 20 requests in 15 minutes for this credential</li>
+        </ul>
+      </div>
+
+      <div class="endpoint" id="ep-full-verify">
+        <div class="endpoint-head"><span class="method method-post">POST</span><code>/card/:reference/details/verify</code><span>Full details, step 2: get them</span></div>
+        <p>Send back the <code>challengeId</code> and the code from the webhook. The answer has the full card details straight from UnionPay. SaveApp doesn't store them, and the response is marked <code>Cache-Control: no-store</code>; show them to your customer and don't keep them.</p>
+        <h4>Body</h4>
+        <table class="docs-table">
+          <thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td><code>challengeId</code></td><td>string</td><td>Yes</td><td>From step 1</td></tr>
+            <tr><td><code>otp</code></td><td>string</td><td>Yes</td><td>The 6-digit code from the <code>card.details_otp</code> webhook</td></tr>
+          </tbody>
+        </table>
+<pre class="docs-code">curl -X POST {{apiBase}}/card/41000002/details/verify \
+  -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" \
+  -d '{"challengeId": "chl_9f3c0b6e2d1a4c7b8e5f60a1b2c3d4e5", "otp": "482913"}'</pre>
+        <h4>Response <span class="status-code">200</span></h4>
+<pre class="docs-code">{
+  "reference": "41000002",
+  "name": "Achieng Otieno",
+  "cardNumber": "6234010123454321",
+  "expiry": "12/29",
+  "cvv": "123",
+  "status": "Active"
+}</pre>
+        <h4>Errors</h4>
+        <ul class="docs-errors">
+          <li><code>400</code> Wrong code (5 tries, then request a new one), expired, already used or replaced, or unknown challenge</li>
+          <li><code>502</code> UnionPay could not be reached; request a new code and try again</li>
+        </ul>
+        <div class="docs-note docs-note-warn">{{icon "triangle-alert" size=16}}<p>Full card details are sensitive. Only request them when your customer asks, never log them, and don't keep them after showing them.</p></div>
+      </div>
+
+      <div class="endpoint" id="ep-balance">
+        <div class="endpoint-head"><span class="method method-get">GET</span><code>/card/:reference/balance</code><span>Live balance</span></div>
+        <h4>Response <span class="status-code">200</span></h4>
+<pre class="docs-code">{ "reference": "41000002", "balance": 1250.5, "currency": "KES" }</pre>
+      </div>
+
+      <div class="endpoint" id="ep-transactions">
+        <div class="endpoint-head"><span class="method method-get">GET</span><code>/card/:reference/transactions</code><span>Live transactions</span></div>
+        <h4>Query parameters</h4>
+        <table class="docs-table">
+          <thead><tr><th>Name</th><th>Type</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td><code>fromDate</code></td><td>string</td><td><code>YYYY-MM-DD</code></td></tr>
+            <tr><td><code>toDate</code></td><td>string</td><td><code>YYYY-MM-DD</code></td></tr>
+            <tr><td><code>count</code></td><td>integer</td><td>1 to 100</td></tr>
+            <tr><td><code>page</code></td><td>integer</td><td>From 1</td></tr>
+          </tbody>
+        </table>
+        <h4>Response <span class="status-code">200</span></h4>
+<pre class="docs-code">{
+  "reference": "41000002",
+  "transactions": [ { … as UnionPay reports them … } ],
+  "count": 8
+}</pre>
+        <p class="docs-small">Transactions are passed through as UnionPay reports them. For a reliable record, store the <code>card.transaction</code> webhooks you receive.</p>
+      </div>
+
+      <div class="endpoint" id="ep-status">
+        <div class="endpoint-head"><span class="method method-post">POST</span><code>/card/:reference/status</code><span>Block, unblock or terminate</span></div>
+        <h4>Body</h4>
+        <table class="docs-table">
+          <thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td><code>action</code></td><td>string</td><td>Yes</td><td><code>block</code> (temporary), <code>unblock</code> or <code>terminate</code> (permanent)</td></tr>
+            <tr><td><code>reason</code></td><td>string</td><td>Yes</td><td>Up to 200 characters; kept in the card's activity</td></tr>
+          </tbody>
+        </table>
+<pre class="docs-code">curl -X POST {{apiBase}}/card/41000002/status \
+  -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" \
+  -d '{"action": "block", "reason": "Customer reported the phone stolen"}'</pre>
+        <h4>Response <span class="status-code">200</span></h4>
+        <p class="docs-small">The updated <a class="link" href="#card-object">card object</a>.</p>
+        <h4>Errors</h4>
+        <ul class="docs-errors"><li><code>400</code> The card is already terminated or replaced, or UnionPay refused the change</li></ul>
+      </div>
+
+      <div class="endpoint" id="ep-replace">
+        <div class="endpoint-head"><span class="method method-post">POST</span><code>/card/:reference/replace</code><span>Replace a card</span></div>
+        <p>Issues a new card to the same cardholder. The old card becomes <code>Replaced</code> and stops working.</p>
+        <h4>Body</h4>
+        <table class="docs-table">
+          <thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Notes</th></tr></thead>
+          <tbody><tr><td><code>reason</code></td><td>string</td><td>Yes</td><td>Up to 200 characters</td></tr></tbody>
+        </table>
+        <h4>Response <span class="status-code">201</span></h4>
+        <p class="docs-small">The <strong>new</strong> <a class="link" href="#card-object">card object</a>, with a new reference. Update your records.</p>
+      </div>
+    </section>
+
+    <section id="card-object" class="docs-section">
+      <h2>The card object</h2>
+      <table class="docs-table">
+        <thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>reference</code></td><td>string</td><td>The card's id for every card call</td></tr>
+          <tr><td><code>name</code></td><td>string</td><td>Name on the card</td></tr>
+          <tr><td><code>description</code></td><td>string</td><td>Your note (may be empty)</td></tr>
+          <tr><td><code>maskedNumber</code></td><td>string</td><td>First six and last four digits. The full number and CVV are only returned by the <a class="link" href="#ep-full">full details</a> check</td></tr>
+          <tr><td><code>type</code></td><td>string</td><td><code>UnionPay</code></td></tr>
+          <tr><td><code>currency</code></td><td>string</td><td><code>KES</code></td></tr>
+          <tr><td><code>status</code></td><td>string</td><td><code>Active</code>, <code>Blocked</code>, <code>Terminated</code> or <code>Replaced</code></td></tr>
+          <tr><td><code>expiryDate</code></td><td>string or null</td><td>End of the expiry month, when known</td></tr>
+          <tr><td><code>issuedAt</code></td><td>string</td><td>When the card was issued</td></tr>
+          <tr><td><code>cardholder.alias</code></td><td>string</td><td>UnionPay's cardholder reference</td></tr>
+          <tr><td><code>cardholder.mobile</code></td><td>string</td><td>Cardholder mobile, <code>2547XXXXXXXX</code></td></tr>
+          <tr><td><code>createdAt</code></td><td>string</td><td>When SaveApp stored the card</td></tr>
+        </tbody>
+      </table>
+<pre class="docs-code">{
+  "reference": "41000002",
+  "name": "Achieng Otieno",
+  "description": "Weekly savings payout",
+  "maskedNumber": "623401••••••4321",
+  "type": "UnionPay",
+  "currency": "KES",
+  "status": "Active",
+  "expiryDate": "2029-12-31T00:00:00.000Z",
+  "issuedAt": "2026-10-20T09:12:44.000Z",
+  "cardholder": { "alias": "41000001", "mobile": "254700000110" },
+  "createdAt": "2026-10-20T09:12:44.000Z"
+}</pre>
+    </section>
+
+    <section id="webhooks" class="docs-section">
+      <h2>Webhooks</h2>
+      <p>Add an endpoint under <strong>Integrations › Webhooks</strong>. SaveApp posts a JSON event to it whenever UnionPay reports something about one of your cards. Reply with any <code>2xx</code> status within a few seconds; do the heavy work after replying.</p>
+      <table class="docs-table">
+        <thead><tr><th>Event</th><th>When</th></tr></thead>
+        <tbody>
+          <tr><td><code>card.transaction</code></td><td>A card was used: amount, currency, merchant and whether it was approved.</td></tr>
+          <tr><td><code>card.otp</code></td><td>Your customer is paying with the card and UnionPay needs a one-time code to authorise it. Pass the code to your customer straight away (SMS or in your app); the payment waits for it.</td></tr>
+          <tr><td><code>card.details_otp</code></td><td>You asked for a card's full details. Send the code back to <code>/card/:reference/details/verify</code>.</td></tr>
+          <tr><td><code>webhook.test</code></td><td>You pressed Send test event in the portal.</td></tr>
+        </tbody>
+      </table>
+      <p>Every event has the same envelope:</p>
+<pre class="docs-code">{
+  "id": "evt_0c39011669159a1904722aec",
+  "event": "card.transaction",
+  "createdAt": "2026-11-06T08:38:23.904Z",
+  "data": {
+    "cardReference": "000000004408",
+    "cardAlias": "000000004408",
+    "callReference": "{5D357FCE-FD04-4B4E-909C-9FFB750374C2}",
+    "merchant": { "name": "NAIVAS WESTLANDS NAIROBI KE", "mcc": 5411, "localDateTime": "2026-11-06T10:00:12Z" },
+    "transactionDetails": {
+      "transactionAmount": 250,
+      "transactionCurrencyCode": "KES",
+      "settlementAmount": null,
+      "settlementCurrencyCode": null,
+      "settlementConversionRate": null,
+      "maskedPan": "**** **** **** 5958",
+      "type": { "code": "00", "description": "Authorisation (Goods and services)", "isReversal": false },
+      "status": { "code": "00", "isSuccessful": true, "reason": "Approved" }
+    }
+  }
+}</pre>
+      <h4><code>card.transaction</code> data</h4>
+      <table class="docs-table">
+        <tbody>
+          <tr><td><code>cardReference</code></td><td>The card's reference</td></tr>
+          <tr><td><code>cardAlias</code></td><td>Same as <code>cardReference</code> (UnionPay's name for it)</td></tr>
+          <tr><td><code>callReference</code></td><td>UnionPay's id for this event; use it when you contact support</td></tr>
+          <tr><td><code>merchant.name</code>, <code>.mcc</code>, <code>.localDateTime</code></td><td>Where and when the card was used (name usually includes the town and country; <code>mcc</code> is the merchant category code)</td></tr>
+          <tr><td><code>transactionDetails.transactionAmount</code>, <code>.transactionCurrencyCode</code></td><td>Amount and currency at the merchant</td></tr>
+          <tr><td><code>transactionDetails.settlementAmount</code>, <code>.settlementCurrencyCode</code>, <code>.settlementConversionRate</code></td><td>What the card was charged when the merchant used another currency; <code>null</code> otherwise</td></tr>
+          <tr><td><code>transactionDetails.maskedPan</code></td><td>Masked card number, last four digits only</td></tr>
+          <tr><td><code>transactionDetails.type</code></td><td><code>{ code, description, isReversal }</code>. <code>code</code> is the ISO 8583 processing code, e.g. <code>00</code> Authorisation (goods and services), <code>01</code> Cash withdrawal, <code>09</code> Goods and services with cash back, <code>20</code> Returns (refund), <code>21</code> Deposit. When a merchant reverses a payment, <code>description</code> starts with <code>[Reversal]</code> and <code>isReversal</code> is <code>true</code>.</td></tr>
+          <tr><td><code>transactionDetails.status</code></td><td><code>{ code, isSuccessful, reason }</code>. <code>code</code> is the ISO 8583 response code, e.g. <code>00</code> Approved, <code>05</code> Do not honor, <code>13</code> Invalid amount, <code>41</code> Lost card, <code>43</code> Stolen card, <code>51</code> Not sufficient funds. Check <code>isSuccessful</code> rather than the code.</td></tr>
+        </tbody>
+      </table>
+      <h4><code>card.otp</code> data</h4>
+<pre class="docs-code">{
+  "id": "evt_a88f106e71930d7034057150",
+  "event": "card.otp",
+  "createdAt": "2026-11-06T10:00:05.112Z",
+  "data": {
+    "cardReference": "000000004408",
+    "cardholderAlias": "CH000404579",
+    "mobile": "254794310952",
+    "otp": "534756",
+    "callReference": "{0E1C7A52-3B8E-4F0B-9D7A-6C2B9E1F4A10}",
+    "merchant": { "name": "JUMIA KENYA", "mcc": 5399, "country": "KE" },
+    "transactionDetails": { "transactionAmount": 250, "transactionCurrencyCode": "KES" }
+  }
+}</pre>
+      <table class="docs-table">
+        <tbody>
+          <tr><td><code>cardReference</code></td><td>The card being used</td></tr>
+          <tr><td><code>cardholderAlias</code></td><td>UnionPay's cardholder reference</td></tr>
+          <tr><td><code>mobile</code></td><td>Cardholder mobile, <code>2547XXXXXXXX</code></td></tr>
+          <tr><td><code>otp</code></td><td>The code that authorises the payment. Pass it to your customer at once; don't log or store it.</td></tr>
+          <tr><td><code>callReference</code></td><td>UnionPay's id for this event, or <code>null</code></td></tr>
+          <tr><td><code>merchant.name</code>, <code>.mcc</code>, <code>.country</code></td><td>Who is charging the card (<code>country</code> is ISO 3166-1 alpha-2). <code>merchant</code> is <code>null</code> when UnionPay doesn't say.</td></tr>
+          <tr><td><code>transactionDetails.transactionAmount</code>, <code>.transactionCurrencyCode</code></td><td>The amount being authorised, or <code>null</code> when UnionPay doesn't say</td></tr>
+        </tbody>
+      </table>
+      <p class="docs-small">A good message to your customer: "534756 is your code to pay KES 250 at JUMIA KENYA. Never share it." Only send it to the cardholder's own phone or app.</p>
+      <h4><code>card.details_otp</code> data</h4>
+      <table class="docs-table">
+        <tbody>
+          <tr><td><code>cardReference</code></td><td>The card you asked about</td></tr>
+          <tr><td><code>challengeId</code></td><td>Matches the <code>challengeId</code> from step 1</td></tr>
+          <tr><td><code>otp</code></td><td>The 6-digit code. Use it once, then discard it.</td></tr>
+          <tr><td><code>expiresAt</code></td><td>When the code stops working (5 minutes)</td></tr>
+        </tbody>
+      </table>
+      <p>Use the event <code>id</code> to ignore duplicates. Deliveries are not retried yet, so watch <strong>Integrations › Event logs</strong>: it keeps every delivery, with the payload and your endpoint's answer, for a month.</p>
+    </section>
+
+    <section id="signatures" class="docs-section">
+      <h2>Verify signatures</h2>
+      <p>Every event carries these headers:</p>
+      <table class="docs-table">
+        <tbody>
+          <tr><td><code>X-SaveApp-Event</code></td><td>The event name</td></tr>
+          <tr><td><code>X-SaveApp-Delivery</code></td><td>The event id</td></tr>
+          <tr><td><code>X-SaveApp-Timestamp</code></td><td>Unix seconds when it was sent</td></tr>
+          <tr><td><code>X-SaveApp-Signature</code></td><td><code>sha256=</code> + HMAC-SHA256 of <code>&lt;timestamp&gt;.&lt;raw body&gt;</code> with the endpoint's signing secret</td></tr>
+        </tbody>
+      </table>
+      <p>Compute the signature over the <strong>raw</strong> request body, compare in constant time, and reject events older than five minutes.</p>
+      <div class="code-tabs" data-code-tabs>
+        <div class="code-tabs-bar" role="tablist">
+          <button type="button" class="is-active" data-code-tab="node">Node.js</button>
+          <button type="button" data-code-tab="python">Python</button>
+          <button type="button" data-code-tab="php">PHP</button>
+        </div>
+<pre data-code-panel="node">import crypto from 'node:crypto';
+import express from 'express';
+
+const app = express();
+
+app.post('/webhooks/saveapp', express.raw({ type: 'application/json' }), (req, res) => {
+  const timestamp = req.get('X-SaveApp-Timestamp');
+  const expected = 'sha256=' + crypto
+    .createHmac('sha256', process.env.SAVEAPP_WEBHOOK_SECRET)
+    .update(`${timestamp}.${req.body}`)
+    .digest('hex');
+  const received = req.get('X-SaveApp-Signature') ?? '';
+  const fresh = Math.abs(Date.now() / 1000 - Number(timestamp)) &lt; 300;
+  const valid = received.length === expected.length &&
+    crypto.timingSafeEqual(Buffer.from(received), Buffer.from(expected));
+  if (!valid || !fresh) return res.status(400).end();
+
+  const event = JSON.parse(req.body);
+  res.status(200).end(); // reply first, then handle the event
+});</pre>
+<pre data-code-panel="python" hidden>import hashlib, hmac, os, time
+from flask import Flask, request, abort
+
+app = Flask(__name__)
+
+@app.post("/webhooks/saveapp")
+def saveapp_webhook():
+    timestamp = request.headers.get("X-SaveApp-Timestamp", "")
+    body = request.get_data()  # raw bytes
+    expected = "sha256=" + hmac.new(
+        os.environ["SAVEAPP_WEBHOOK_SECRET"].encode(),
+        f"{timestamp}.".encode() + body,
+        hashlib.sha256,
+    ).hexdigest()
+    received = request.headers.get("X-SaveApp-Signature", "")
+    if not hmac.compare_digest(received, expected) or abs(time.time() - int(timestamp)) > 300:
+        abort(400)
+    event = request.get_json()
+    return "", 200</pre>
+<pre data-code-panel="php" hidden>&lt;?php
+$body = file_get_contents('php://input');
+$timestamp = $_SERVER['HTTP_X_SAVEAPP_TIMESTAMP'] ?? '';
+$expected = 'sha256=' . hash_hmac('sha256', $timestamp . '.' . $body, getenv('SAVEAPP_WEBHOOK_SECRET'));
+$received = $_SERVER['HTTP_X_SAVEAPP_SIGNATURE'] ?? '';
+
+if (!hash_equals($expected, $received) || abs(time() - (int) $timestamp) > 300) {
+    http_response_code(400);
+    exit;
+}
+$event = json_decode($body, true);
+http_response_code(200);</pre>
+      </div>
+    </section>
+
+    <section id="errors" class="docs-section">
+      <h2>Errors</h2>
+      <p>Errors come back as JSON with a <code>message</code> you can show or log.</p>
+      <table class="docs-table">
+        <thead><tr><th>Status</th><th>Meaning</th></tr></thead>
+        <tbody>
+          <tr><td><code>400</code></td><td>The request is invalid, or UnionPay refused it (its message is passed on).</td></tr>
+          <tr><td><code>401</code></td><td>Missing, invalid or expired token; wrong client secret; credential switched off.</td></tr>
+          <tr><td><code>403</code></td><td>IP not on the whitelist, business not approved, credential lacks the scope, or too many failed token attempts.</td></tr>
+          <tr><td><code>404</code></td><td>No card with that reference in your business.</td></tr>
+          <tr><td><code>502</code></td><td>UnionPay could not be reached. Try again shortly.</td></tr>
+        </tbody>
+      </table>
+<pre class="docs-code">{ "message": "Requests from 203.0.113.99 are not allowed", "error": "Forbidden", "statusCode": 403 }</pre>
+    </section>
+
+    <section id="live" class="docs-section">
+      <h2>Going live checklist</h2>
+      <ul class="docs-checklist">
+        <li>{{icon "circle-check" size=18}} Your business shows <strong>Approved</strong> in the merchant portal.</li>
+        <li>{{icon "circle-check" size=18}} Each server has its own credential, with only the scopes it needs.</li>
+        <li>{{icon "circle-check" size=18}} Every credential has an IP whitelist (required in production).</li>
+        <li>{{icon "circle-check" size=18}} Client secrets and webhook signing secrets live in a secrets manager, not in code.</li>
+        <li>{{icon "circle-check" size=18}} Your webhook endpoint uses HTTPS, verifies signatures and ignores duplicate event ids.</li>
+        <li>{{icon "circle-check" size=18}} Someone checks Event logs for failed deliveries.</li>
+      </ul>
+      <p>Questions? Write to <a class="link" href="mailto:support@saveapp.co.ke">support@saveapp.co.ke</a>.</p>
+    </section>
+  </article>
+</div>

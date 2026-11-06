@@ -1,0 +1,47 @@
+{{#if members.length}}
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Member</th>
+          <th>Roles</th>
+          <th>Status</th>
+          <th class="hide-md">Joined</th>
+          <th class="col-actions"><span class="sr-only">Manage</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each members}}
+          <tr class="row-link" data-drawer-url="{{../base}}/{{id}}">
+            <td>
+              <span class="entity">
+                {{> shared/avatar photo=photo initials=initials size="sm"}}
+                <span class="entity-stack">
+                  <span class="entity-name">{{name}}{{#if isMe}} <span class="badge">You</span>{{/if}}</span>
+                  <span class="entity-sub">{{email}}</span>
+                </span>
+              </span>
+            </td>
+            <td>
+              {{#if roles.length}}
+                <span class="chip-list">{{#each roles}}<span class="badge">{{this}}</span>{{/each}}{{#if moreRoles}}<span class="badge">+{{moreRoles}}</span>{{/if}}</span>
+              {{else}}
+                <span class="muted">No role</span>
+              {{/if}}
+            </td>
+            <td>{{#if active}}{{> shared/status tone="success" label="Active"}}{{else}}{{> shared/status tone="neutral" label="Inactive"}}{{/if}}</td>
+            <td class="hide-md">{{joined}}</td>
+            <td class="col-actions"><button type="button" class="icon-btn icon-btn-ghost icon-btn-xs" data-drawer-url="{{../base}}/{{id}}" aria-label="Manage {{name}}">{{icon "chevron-right" size=16}}</button></td>
+          </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+  {{> shared/pager}}
+{{else}}
+  {{#if filtered}}
+    {{> shared/empty icon="search" title="No members match" text="Try a different search or status."}}
+  {{else}}
+    {{> shared/empty icon="users" title="No members yet" text="Invite people to give them access."}}
+  {{/if}}
+{{/if}}

@@ -1,0 +1,8 @@
+{{#> layout title="Complete your registration"}}
+  <h1>Welcome to SaveApp</h1>
+  <p>Hi {{name}},</p>
+  <p>Thanks for signing up. Use the code below to verify your email and finish creating your account.</p>
+  {{> code code=code}}
+  <p>This code expires in {{expiryMinutes}} minutes.</p>
+  <p class="muted">If you didn't create an account, you can safely ignore this email.</p>
+{{/layout}}

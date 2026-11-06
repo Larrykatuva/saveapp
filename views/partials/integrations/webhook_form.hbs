@@ -1,0 +1,49 @@
+<form class="drawer-form" method="post" action="{{action}}" data-ajax-form data-refresh="#webhooks-table" novalidate>
+  <header class="drawer-header">
+    <div>
+      <p class="eyebrow">Webhook endpoint</p>
+      <h2 class="drawer-title" id="drawer-title">{{#if editing}}Edit endpoint{{else}}Add endpoint{{/if}}</h2>
+      <p class="drawer-subtitle">We post card events from UnionPay to this URL, signed with the endpoint's secret.</p>
+    </div>
+    <button type="button" class="icon-btn icon-btn-ghost" data-drawer-close aria-label="Close">{{icon "x" size=18}}</button>
+  </header>
+
+  <div class="drawer-content">
+    {{#if formError}}<div class="alert alert-error">{{icon "circle-alert" size=16}}<span>{{formError}}</span></div>{{/if}}
+    {{> auth/field name="url" label="Endpoint URL" type="url" icon="link" value=values.url error=errors.url placeholder="https://example.com/webhooks/saveapp" autofocus=true}}
+    {{> shared/switch_field label="Active" hint="Paused endpoints receive nothing" checked=values.active}}
+
+    {{#if editing}}
+      <div class="field">
+        <span class="field-label">Signing secret</span>
+        <div class="copy-field" data-secret>
+          <code data-secret-value hidden>{{webhook.secret}}</code>
+          <code data-secret-mask>whsec_••••••••••••••••</code>
+          <button type="button" class="btn btn-outline btn-sm" data-secret-toggle>{{icon "eye" size=14}} Show</button>
+          <button type="button" class="btn btn-outline btn-sm" data-copy="{{webhook.secret}}">{{icon "copy" size=14}} Copy</button>
+        </div>
+        <p class="field-hint">Use it to check the X-SaveApp-Signature header on every event.</p>
+      </div>
+
+      {{#if webhook.lastStatus}}
+        <dl class="detail-rows">
+          <div><dt>Last delivery</dt><dd>{{webhook.lastStatus}} · {{webhook.lastDelivery}}</dd></div>
+          {{#if webhook.lastError}}<div><dt>Last error</dt><dd class="url-text">{{webhook.lastError}}</dd></div>{{/if}}
+        </dl>
+      {{/if}}
+
+      <div class="danger-zone">
+        <div>
+          <p class="field-label">Rotate signing secret</p>
+          <p class="field-hint">Events are signed with the new secret straight away.</p>
+        </div>
+        <button type="button" class="btn btn-danger-outline btn-sm" data-confirm-url="/merchant/integrations/webhooks/{{webhook.id}}/rotate" data-confirm-title="Rotate the signing secret?" data-confirm-text="Your endpoint must use the new secret to verify events from now on." data-confirm-label="Rotate secret">{{icon "rotate-ccw" size=14}} Rotate</button>
+      </div>
+    {{/if}}
+  </div>
+
+  <footer class="drawer-footer">
+    <button type="button" class="btn btn-outline" data-drawer-close>Cancel</button>
+    <button type="submit" class="btn btn-primary" data-loading-text="Saving…">{{#if editing}}Save changes{{else}}Add endpoint{{/if}}</button>
+  </footer>
+</form>

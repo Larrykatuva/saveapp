@@ -1,0 +1,23 @@
+<div class="auth-card">
+  <header class="auth-header">
+    <h1 class="auth-title">Welcome back</h1>
+    <p class="auth-subtitle">Sign in with your email and password.</p>
+  </header>
+
+  {{> auth/alert}}
+
+  <form method="post" action="/auth/login" class="auth-form" novalidate data-loading-form>
+    <input type="hidden" name="_csrf" value="{{csrfToken}}" />
+    {{> auth/field name="email" label="Email" type="email" icon="mail" value=values.email error=errors.email autocomplete="email" placeholder="you@business.co.ke" autofocus=true}}
+    {{> auth/password name="password" label="Password" error=errors.password placeholder="Enter your password" forgot=true}}
+
+    <label class="checkbox-row">
+      <input type="checkbox" class="checkbox" name="remember" {{#if values.remember}}checked{{/if}} />
+      <span>Keep me signed in for 30 days</span>
+    </label>
+
+    <button type="submit" class="btn btn-primary btn-block btn-lg" data-loading-text="Signing in…">Sign in</button>
+  </form>
+
+  <p class="auth-switch">New to SaveApp? <a class="link" href="/auth/register">Create a merchant account</a></p>
+</div>

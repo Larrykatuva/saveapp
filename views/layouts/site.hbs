@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    {{> shared/head}}
+    <title>{{#if title}}{{title}} · {{/if}}SaveApp for business</title>
+    <meta name="description" content="Issue and manage prepaid UnionPay cards for your customers through the SaveApp API and merchant portal." />
+  </head>
+  <body class="site{{#if bodyClass}} {{bodyClass}}{{/if}}">
+    <header class="site-header">
+      <div class="site-wrap site-header-inner">
+        <a class="brand" href="/" aria-label="SaveApp for business, home">
+          <img src="/static/assets/images/logo.png" alt="SaveApp" width="164" height="41" />
+        </a>
+        <nav class="site-nav" aria-label="Main">
+          <a href="/#partners">Partners</a>
+          <a href="/#features">Features</a>
+          <a href="/#how">How it works</a>
+          <a href="/developers">Developers</a>
+          <a href="/docs">API reference</a>
+        </nav>
+        <div class="site-actions">
+          <a class="btn btn-ghost" href="/auth/login">Sign in</a>
+          <a class="btn btn-primary" href="/auth/register">Get started</a>
+        </div>
+      </div>
+    </header>
+
+    {{{body}}}
+
+    <footer class="site-footer">
+      <div class="site-wrap site-footer-inner">
+        <div>
+          <img src="/static/assets/images/logo.png" alt="SaveApp" width="132" height="33" />
+          <p class="site-footer-text">Cards and money tools for businesses worldwide, from the team behind Ukonga.</p>
+        </div>
+        <nav class="site-footer-links" aria-label="Footer">
+          <a href="/developers">Developer guide</a>
+          <a href="/docs">API reference</a>
+          <a href="/auth/register">Create an account</a>
+          <a href="https://saveapp.co.ke/site/" target="_blank" rel="noopener">saveapp.co.ke</a>
+          <a href="mailto:support@saveapp.co.ke">support@saveapp.co.ke</a>
+        </nav>
+      </div>
+      <div class="site-wrap site-footer-base">© {{year}} SaveApp. All rights reserved.</div>
+    </footer>
+    <script src="/static/js/main.js" defer></script>
+  </body>
+</html>

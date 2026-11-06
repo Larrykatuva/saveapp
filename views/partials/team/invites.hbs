@@ -1,0 +1,32 @@
+{{#if invites.length}}
+  <div class="table-wrap">
+    <table class="table">
+      <thead><tr><th>Invited</th><th>Role</th><th class="hide-md">Sent</th><th>Status</th><th class="col-actions"><span class="sr-only">Actions</span></th></tr></thead>
+      <tbody>
+        {{#each invites}}
+          <tr>
+            <td>
+              <span class="entity">
+                <span class="avatar avatar-sm">{{initials}}</span>
+                <span class="entity-stack"><span class="entity-name">{{#if fullName}}{{fullName}}{{else}}{{email}}{{/if}}</span>{{#if fullName}}<span class="entity-sub">{{email}}</span>{{/if}}</span>
+              </span>
+            </td>
+            <td><span class="badge">{{role}}</span></td>
+            <td class="hide-md">{{sent}}</td>
+            <td>{{#if expired}}{{> shared/status tone="danger" label="Expired"}}{{else}}{{> shared/status tone="warning" label="Pending"}}<p class="entity-sub">Until {{expires}}</p>{{/if}}</td>
+            <td class="col-actions">
+              {{#if @root.rights.manage}}
+                <div class="row-actions">
+                  <button type="button" class="btn btn-outline btn-sm" data-post-url="{{../base}}/invites/{{id}}/resend" data-refresh="#invites-table">{{icon "send" size=14}} Resend</button>
+                  <button type="button" class="icon-btn icon-btn-ghost icon-btn-sm icon-btn-danger" data-confirm-url="{{../base}}/invites/{{id}}/revoke" data-refresh="#invites-table" data-confirm-title="Revoke the invitation to {{email}}?" data-confirm-text="The link stops working. You can invite them again later." data-confirm-label="Revoke" aria-label="Revoke invitation to {{email}}">{{icon "x" size=16}}</button>
+                </div>
+              {{/if}}
+            </td>
+          </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+{{else}}
+  {{> shared/empty icon="mail-plus" title="No open invitations" text="Invite people by email. They'll show here until they join."}}
+{{/if}}

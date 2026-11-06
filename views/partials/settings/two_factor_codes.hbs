@@ -1,0 +1,22 @@
+<div class="drawer-form" data-reload-on-close>
+  <header class="drawer-header">
+    <div>
+      <p class="eyebrow">Two-step verification</p>
+      <h2 class="drawer-title" id="drawer-title">{{#if codes}}Save your recovery codes{{else}}Already shown{{/if}}</h2>
+      <p class="drawer-subtitle">{{#if codes}}If you lose your phone, each code lets you sign in once. This is the only time we show them.{{else}}For security we only show recovery codes once. Create new ones from My account.{{/if}}</p>
+    </div>
+    <button type="button" class="icon-btn icon-btn-ghost" data-drawer-close aria-label="Close">{{icon "x" size=18}}</button>
+  </header>
+  <div class="drawer-content">
+    {{#if codes}}
+      <ul class="recovery-codes">
+        {{#each codes}}<li><code>{{this}}</code></li>{{/each}}
+      </ul>
+      <button type="button" class="btn btn-outline" data-copy="{{text}}">{{icon "copy" size=14}} Copy all codes</button>
+      <div class="alert alert-warning">{{icon "triangle-alert" size=16}}<span>Keep them somewhere safe, away from your phone, such as a password manager.</span></div>
+    {{/if}}
+  </div>
+  <footer class="drawer-footer">
+    <button type="button" class="btn btn-primary" data-drawer-close>{{#if codes}}I've saved them{{else}}Close{{/if}}</button>
+  </footer>
+</div>

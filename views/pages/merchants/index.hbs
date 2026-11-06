@@ -1,0 +1,25 @@
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Merchants</h1>
+    <p class="page-subtitle">Businesses on SaveApp, newest first. Open one to review its documents.</p>
+  </div>
+</div>
+
+<div class="tabs" role="tablist" aria-label="Filter by status">
+  {{#each tabs}}
+    <button type="button" role="tab" class="tab{{#if active}} is-active{{/if}}" data-table-tab="#merchants-table" data-param="status" data-value="{{value}}" aria-selected="{{#if active}}true{{else}}false{{/if}}">{{label}} <span class="tab-count">{{count}}</span></button>
+  {{/each}}
+</div>
+
+<div class="toolbar">
+  <label class="input input-search">
+    {{icon "search" size=16}}
+    <input type="search" name="q" value="{{q}}" placeholder="Search by name, email or phone" aria-label="Search merchants" data-table-search="#merchants-table" autocomplete="off" />
+  </label>
+</div>
+
+<section class="table-card">
+  <div id="merchants-table" class="data-table" data-table-url="/admin/merchants/table">
+    {{> merchants/table}}
+  </div>
+</section>

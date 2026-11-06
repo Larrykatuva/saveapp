@@ -1,0 +1,32 @@
+{{#> portal/section}}
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Members</h1>
+      <p class="page-subtitle">People with access to {{account.name}} and the roles they hold.</p>
+    </div>
+    {{#if rights.invite}}
+      <div class="page-actions">
+        <button type="button" class="btn btn-primary" data-drawer-url="{{portal.basePath}}/team/invites/new">{{icon "user-plus" size=16}} Invite people</button>
+      </div>
+    {{/if}}
+  </div>
+
+  <div class="tabs" role="tablist" aria-label="Filter by status">
+    {{#each tabs}}
+      <button type="button" role="tab" class="tab{{#if active}} is-active{{/if}}" data-table-tab="#team-table" data-param="status" data-value="{{value}}" aria-selected="{{#if active}}true{{else}}false{{/if}}">{{label}} <span class="tab-count">{{count}}</span></button>
+    {{/each}}
+  </div>
+
+  <div class="toolbar">
+    <label class="input input-search">
+      {{icon "search" size=16}}
+      <input type="search" name="q" value="{{q}}" placeholder="Search by name or email" aria-label="Search members" data-table-search="#team-table" autocomplete="off" />
+    </label>
+  </div>
+
+  <section class="table-card">
+    <div id="team-table" class="data-table" data-table-url="{{base}}/table">
+      {{> team/table}}
+    </div>
+  </section>
+{{/portal/section}}

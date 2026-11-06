@@ -1,0 +1,28 @@
+<form class="drawer-form" method="post" action="{{action}}" enctype="multipart/form-data" data-ajax-form data-refresh="#countries-table" novalidate>
+  <header class="drawer-header">
+    <div>
+      <h2 class="drawer-title" id="drawer-title">{{#if editing}}Edit country{{else}}Add country{{/if}}</h2>
+      <p class="drawer-subtitle">{{#if editing}}Update how {{values.name}} appears across SaveApp.{{else}}Make a new country available to merchants.{{/if}}</p>
+    </div>
+    <button type="button" class="icon-btn icon-btn-ghost" data-drawer-close aria-label="Close">{{icon "x" size=18}}</button>
+  </header>
+
+  <div class="drawer-content">
+    {{#if hasErrors}}<div class="alert alert-error">{{icon "circle-alert" size=16}}<span>Please fix the highlighted fields.</span></div>{{/if}}
+
+    {{> auth/field name="name" label="Country name" value=values.name error=errors.name placeholder="e.g. Kenya" autofocus=true}}
+    {{> auth/field name="code" label="ISO code" value=values.code error=errors.code placeholder="KE" maxlength="2" hint="2-letter ISO 3166 code, used for the flag"}}
+    <div class="entity">
+      <img class="flag" src="{{#if values.code}}https://flagcdn.com/w80/{{lower values.code}}.png{{/if}}" alt="" {{#unless values.code}}hidden{{/unless}} data-flag-img />
+      <span class="tile" {{#if values.code}}hidden{{/if}} data-flag-placeholder>{{icon "flag" size=16}}</span>
+      <span class="field-hint">Standard flag for the code{{#if customLogo}} (a custom flag is uploaded){{/if}}</span>
+    </div>
+    {{> shared/image_field label="Custom flag" error=errors.logo hint="Only if the standard flag isn't right." removeLabel="Remove the custom flag and use the standard one"}}
+    {{> shared/switch_field label="Active" hint="Inactive countries are hidden from the sign up form" checked=values.active}}
+  </div>
+
+  <footer class="drawer-footer">
+    <button type="button" class="btn btn-outline" data-drawer-close>Cancel</button>
+    <button type="submit" class="btn btn-primary" data-loading-text="Saving…">{{#if editing}}Save changes{{else}}Add country{{/if}}</button>
+  </footer>
+</form>

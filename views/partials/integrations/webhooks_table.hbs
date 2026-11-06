@@ -1,0 +1,53 @@
+{{#if webhooks.length}}
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Endpoint</th>
+          <th class="hide-md">Last delivery</th>
+          <th>Active</th>
+          <th class="col-actions"><span class="sr-only">Actions</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each webhooks}}
+          <tr class="row-link" data-drawer-url="/merchant/integrations/webhooks/{{id}}">
+            <td>
+              <span class="entity">
+                <span class="tile">{{icon "webhook" size=16}}</span>
+                <span class="entity-stack"><span class="entity-name url-text">{{url}}</span><span class="entity-sub">Added {{created}}</span></span>
+              </span>
+            </td>
+            <td class="hide-md">
+              {{#if lastStatus}}
+                {{#if delivered}}{{> shared/status tone="success" label="Delivered" small=true}}{{else}}{{> shared/status tone="danger" label="Failed" small=true}}{{/if}}
+                <p class="entity-sub">{{lastDelivery}} · <a class="link" href="/merchant/integrations/events?webhook={{id}}">View log</a></p>
+              {{else}}
+                <span class="muted">Nothing sent yet</span>
+              {{/if}}
+            </td>
+            <td>
+              <label class="switch" title="{{#if active}}Pause{{else}}Turn on{{/if}} this endpoint">
+                <input type="checkbox" data-toggle-url="/merchant/integrations/webhooks/{{id}}/toggle" {{#if active}}checked{{/if}} aria-label="Endpoint active" />
+                <span class="switch-track"><span class="switch-thumb"></span></span>
+              </label>
+            </td>
+            <td class="col-actions">
+              <div class="row-actions">
+                <button type="button" class="btn btn-outline btn-sm" data-post-url="/merchant/integrations/webhooks/{{id}}/test" data-refresh="#webhooks-table">{{icon "send" size=14}} Send test event</button>
+                <button type="button" class="icon-btn icon-btn-ghost icon-btn-sm icon-btn-danger" data-confirm-url="/merchant/integrations/webhooks/{{id}}/delete" data-confirm-title="Remove this endpoint?" data-confirm-text="We stop sending events to {{url}}." data-confirm-label="Remove" data-refresh="#webhooks-table" aria-label="Remove endpoint">{{icon "trash-2" size=15}}</button>
+              </div>
+            </td>
+          </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+{{else}}
+  <div class="empty-state">
+    <span class="empty-icon">{{icon "webhook" size=20}}</span>
+    <p class="empty-title">No endpoints yet</p>
+    <p class="empty-text">Add the URL where you want card events from UnionPay delivered.</p>
+    <button type="button" class="btn btn-primary btn-sm" data-drawer-url="/merchant/integrations/webhooks/new">{{icon "plus" size=14}} Add endpoint</button>
+  </div>
+{{/if}}

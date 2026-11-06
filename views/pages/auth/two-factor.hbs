@@ -1,0 +1,40 @@
+<div class="auth-card">
+  <header class="auth-header">
+    <span class="auth-badge">{{#if bySms}}{{icon "message-square" size=22}}{{else if byEmail}}{{icon "mail-check" size=22}}{{else}}{{icon "smartphone" size=22}}{{/if}}</span>
+    <h1 class="auth-title">{{#if bySms}}Check your phone{{else if byEmail}}Check your email{{else}}Two-step verification{{/if}}</h1>
+    <p class="auth-subtitle">
+      {{#if byEmail}}We sent a 6-digit sign-in code to <strong>{{destination}}</strong>. Enter it to finish signing in.
+      {{else if useRecovery}}Enter one of the recovery codes you saved when you set up your authenticator app.
+      {{else}}Open your authenticator app and enter the 6-digit code for SaveApp.{{/if}}
+    </p>
+  </header>
+
+  {{> auth/alert}}
+
+  <form method="post" action="/auth/two-factor" class="auth-form" novalidate data-loading-form>
+    <input type="hidden" name="_csrf" value="{{csrfToken}}" />
+    {{#if useRecovery}}
+      {{> auth/field name="recovery" label="Recovery code" icon="key-round" error=errors.code placeholder="e.g. 3f9c0-b6e2d" autocomplete="off" autofocus=true}}
+    {{else}}
+      {{> auth/otp error=errors.code}}
+    {{/if}}
+    <button type="submit" class="btn btn-primary btn-block btn-lg" data-loading-text="Checking…">Verify and sign in</button>
+  </form>
+
+  {{#if byEmail}}
+    <form method="post" action="/auth/two-factor/resend" class="auth-resend">
+      <input type="hidden" name="_csrf" value="{{csrfToken}}" />
+      <span>Didn't get it?</span>
+      <button type="submit" class="link-button" data-countdown="60">Resend code</button>
+    </form>
+  {{else}}
+    <p class="auth-switch">
+      {{#if useRecovery}}
+        <a class="link" href="/auth/two-factor">Use the code from my app instead</a>
+      {{else}}
+        Lost your phone? <a class="link" href="/auth/two-factor?recovery=1">Use a recovery code</a>
+      {{/if}}
+    </p>
+  {{/if}}
+  <p class="auth-switch"><a class="link link-muted" href="/auth/login">{{icon "arrow-left" size=14}} Back to sign in</a></p>
+</div>

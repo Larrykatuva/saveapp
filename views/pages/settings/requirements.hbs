@@ -1,0 +1,45 @@
+{{#> portal/section}}
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Onboarding requirements</h1>
+      <p class="page-subtitle">What merchants must provide before SaveApp approves them, per country and merchant type.</p>
+    </div>
+    {{#if hasCountries}}
+      <div class="page-actions">
+        <button type="button" class="btn btn-primary" data-drawer-url="/admin/settings/requirements/new">{{icon "plus" size=16}} Add requirement</button>
+      </div>
+    {{/if}}
+  </div>
+
+  {{#if hasCountries}}
+    <div class="toolbar">
+      <label class="input input-search">
+        {{icon "search" size=16}}
+        <input type="search" name="q" value="{{q}}" placeholder="Search requirements" aria-label="Search requirements" data-table-search="#requirements-table" autocomplete="off" />
+      </label>
+      <select name="country" class="select select-sm" aria-label="Country" data-table-filter="#requirements-table">
+        <option value="">All countries</option>
+        {{#each countries}}<option value="{{id}}" {{#if selected}}selected{{/if}}>{{name}}</option>{{/each}}
+      </select>
+      <select name="level" class="select select-sm" aria-label="Merchant type" data-table-filter="#requirements-table">
+        <option value="">All merchant types</option>
+        {{#each levels}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}
+      </select>
+    </div>
+
+    <section class="table-card">
+      <div id="requirements-table" class="data-table" data-table-url="/admin/settings/requirements/table">
+        {{> settings/requirements_table}}
+      </div>
+    </section>
+  {{else}}
+    <section class="card">
+      <div class="empty-state">
+        <span class="empty-icon">{{icon "globe" size=20}}</span>
+        <p class="empty-title">Add a country first</p>
+        <p class="empty-text">Requirements belong to a country. Add the countries SaveApp works in, then come back.</p>
+        <a class="btn btn-primary btn-sm" href="/admin/settings/countries">Go to countries</a>
+      </div>
+    </section>
+  {{/if}}
+{{/portal/section}}

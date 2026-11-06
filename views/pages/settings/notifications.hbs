@@ -1,0 +1,25 @@
+{{#> portal/section}}
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Notifications</h1>
+      <p class="page-subtitle">What we send you about {{account.name}}. These apply to your account in this business only.</p>
+    </div>
+  </div>
+
+  <section class="card">
+    <div class="card-body">
+      {{#each switches}}
+        <div class="switch-row">
+          <span>
+            <span class="field-label">{{label}}</span>
+            <span class="field-hint">{{hint}}{{#if (eq key "phone")}} ({{@root.phone}}){{/if}}</span>
+          </span>
+          <label class="switch">
+            <input type="checkbox" data-toggle-url="{{url}}" {{#if on}}checked{{/if}} aria-label="{{label}}" />
+            <span class="switch-track"><span class="switch-thumb"></span></span>
+          </label>
+        </div>
+      {{/each}}
+    </div>
+  </section>
+{{/portal/section}}

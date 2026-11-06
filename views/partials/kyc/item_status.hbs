@@ -1,0 +1,7 @@
+{{#if submission}}
+  {{#if submission.isAccepted}}<span class="pill pill-success pill-sm">Accepted</span>
+  {{else if submission.isRejected}}<span class="pill pill-danger pill-sm">Needs changes</span>{{#if submission.comment}}<p class="item-comment">{{submission.comment}}</p>{{/if}}
+  {{else}}<span class="pill pill-neutral pill-sm">Waiting for review</span>{{/if}}
+{{else}}
+  <span class="pill pill-warning pill-sm">Missing</span>
+{{/if}}

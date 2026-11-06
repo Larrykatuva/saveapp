@@ -1,0 +1,20 @@
+<div class="auth-card">
+  <header class="auth-header">
+    <span class="auth-badge">{{icon "shield-check" size=22}}</span>
+    <h1 class="auth-title">Protect your account, {{firstName}}</h1>
+    <p class="auth-subtitle">Add an authenticator app so signing in also needs a code from your phone. It takes about a minute, and you can turn it off later in My account.</p>
+  </header>
+
+  {{> auth/alert}}
+
+  <ul class="suggest-points">
+    <li>{{icon "smartphone" size=16}} Works with Google Authenticator, Microsoft Authenticator, 1Password and similar apps</li>
+    <li>{{icon "lock-keyhole" size=16}} Stops anyone who only knows your password</li>
+    <li>{{icon "key-round" size=16}} Recovery codes in case you lose your phone</li>
+  </ul>
+
+  <div class="auth-form">
+    <a class="btn btn-primary btn-block btn-lg" href="/auth/two-factor/setup">{{icon "smartphone" size=16}} Set it up now</a>
+    <a class="btn btn-outline btn-block btn-lg" href="/auth/continue">Not now</a>
+  </div>
+</div>

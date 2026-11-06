@@ -1,0 +1,33 @@
+{{#if deliveries.length}}
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Event</th>
+          <th class="hide-md">Endpoint</th>
+          <th>Outcome</th>
+          <th class="hide-md">Sent</th>
+          <th class="col-actions"><span class="sr-only">Open</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each deliveries}}
+          <tr class="row-link" data-drawer-url="/merchant/integrations/events/{{id}}">
+            <td><span class="entity-stack"><span class="entity-name"><span class="code-chip">{{event}}</span></span><span class="entity-sub mono">{{eventId}}</span></span></td>
+            <td class="hide-md"><span class="entity-sub url-text">{{url}}</span></td>
+            <td>{{#if delivered}}{{> shared/status tone="success" label="Delivered" small=true}}{{else}}{{> shared/status tone="danger" label="Failed" small=true}}{{/if}}<p class="entity-sub">{{duration}} ms</p></td>
+            <td class="hide-md">{{when}}</td>
+            <td class="col-actions"><button type="button" class="icon-btn icon-btn-ghost icon-btn-xs" data-drawer-url="/merchant/integrations/events/{{id}}" aria-label="Open {{eventId}}">{{icon "chevron-right" size=16}}</button></td>
+          </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+  {{> shared/pager}}
+{{else}}
+  {{#if filtered}}
+    {{> shared/empty icon="search" title="No events match" text="Try another search, outcome, event or endpoint."}}
+  {{else}}
+    {{> shared/empty icon="scroll-text" title="No events yet" text="Events show here as soon as SaveApp sends one to your endpoints. Use Send test event on the Webhooks tab to try it."}}
+  {{/if}}
+{{/if}}

@@ -1,0 +1,52 @@
+{{#if transactions.length}}
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Card</th>
+          <th>Description</th>
+          <th class="col-amount">Amount</th>
+          <th>Status</th>
+          <th class="hide-md">Reference</th>
+          <th class="col-actions"><span class="sr-only">Open card</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each transactions}}
+          <tr class="row-link" data-drawer-url="{{cardUrl}}">
+            <td class="nowrap">{{when}}</td>
+            <td>
+              <span class="entity-stack"><span class="entity-name">{{cardName}}</span><span class="entity-sub mono">{{maskedNumber}}</span></span>
+            </td>
+            <td>
+              <span class="entity">
+                {{#if (eq direction "credit")}}
+                  <span class="tx-icon tx-icon-credit" title="Incoming payment">{{icon "arrow-down-left" size=16}}<span class="sr-only">Incoming payment</span></span>
+                {{else if (eq direction "debit")}}
+                  <span class="tx-icon tx-icon-debit" title="Outgoing payment">{{icon "arrow-up-right" size=16}}<span class="sr-only">Outgoing payment</span></span>
+                {{else}}
+                  <span class="tx-icon" title="No money moved">{{icon "minus" size=16}}<span class="sr-only">No money moved</span></span>
+                {{/if}}
+                <span class="entity-stack"><span class="entity-name">{{description}}</span>{{#if merchant}}<span class="entity-sub">{{merchant}}</span>{{/if}}</span>
+              </span>
+            </td>
+            <td class="col-amount">
+              <span class="entity-stack"><span class="entity-name amount{{#if direction}} amount-{{direction}}{{/if}}">{{amount}}</span>{{#if fees}}<span class="entity-sub">Fees {{fees}}</span>{{/if}}</span>
+            </td>
+            <td><span class="entity-stack">{{> shared/status tone=tone label=status}}{{#if reason}}<span class="entity-sub">{{reason}}</span>{{/if}}</span></td>
+            <td class="hide-md"><span class="code-chip">{{reference}}</span></td>
+            <td class="col-actions"><button type="button" class="icon-btn icon-btn-ghost icon-btn-xs" data-drawer-url="{{cardUrl}}" aria-label="Open {{cardName}}'s card">{{icon "chevron-right" size=16}}</button></td>
+          </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+  {{> shared/pager}}
+{{else}}
+  {{#if filtered}}
+    {{> shared/empty icon="search" title="No transactions match" text="Try another search or status."}}
+  {{else}}
+    {{> shared/empty icon="arrow-left-right" title="No transactions yet" text="Transactions appear here once your customers use their cards. Refresh to check UnionPay now."}}
+  {{/if}}
+{{/if}}

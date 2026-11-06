@@ -1,0 +1,37 @@
+{{#> portal/section}}
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Webhooks</h1>
+      <p class="page-subtitle">Endpoints where SaveApp posts card events from UnionPay, such as transactions and one-time codes.</p>
+    </div>
+    <div class="page-actions">
+      <button type="button" class="btn btn-primary" data-drawer-url="/merchant/integrations/webhooks/new">{{icon "plus" size=16}} Add endpoint</button>
+    </div>
+  </div>
+
+  <div class="stack">
+    <section class="table-card">
+      <div id="webhooks-table" class="data-table" data-table-url="/merchant/integrations/webhooks/table" data-history="off">
+        {{> integrations/webhooks_table}}
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-head">
+        <div>
+          <h2 class="card-title">Events and signatures</h2>
+          <p class="card-subtitle">Every event is a JSON POST. Answer with a 2xx status to confirm you received it.</p>
+        </div>
+      </div>
+      <div class="card-body">
+        <dl class="detail-rows">
+          <div><dt><span class="code-chip">card.transaction</span></dt><dd>A card was used: amount, merchant and whether it was approved.</dd></div>
+          <div><dt><span class="code-chip">card.otp</span></dt><dd>A one-time code UnionPay generated for a card transaction. Pass it to your customer.</dd></div>
+          <div><dt><span class="code-chip">card.details_otp</span></dt><dd>A code your system asked for to see a card's full details. Send it back to the API to get them.</dd></div>
+          <div><dt><span class="code-chip">webhook.test</span></dt><dd>Sent when you press Send test event.</dd></div>
+        </dl>
+        <p class="field-hint mt-3">Check the <span class="code-chip">X-SaveApp-Signature</span> header: it is <span class="code-chip">sha256=</span> followed by the HMAC-SHA256 of <span class="code-chip">&lt;X-SaveApp-Timestamp&gt;.&lt;raw body&gt;</span> using the endpoint's signing secret.</p>
+      </div>
+    </section>
+  </div>
+{{/portal/section}}

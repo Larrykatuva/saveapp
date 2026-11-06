@@ -1,0 +1,58 @@
+<form class="drawer-form" method="post" action="{{base}}/{{member.id}}" data-ajax-form data-refresh="#team-table" data-team-form novalidate>
+  <header class="drawer-header">
+    <div class="drawer-person">
+      {{> shared/avatar photo=member.photo initials=member.initials size="lg"}}
+      <div>
+        <p class="eyebrow">Team member</p>
+        <h2 class="drawer-title" id="drawer-title">{{member.name}}{{#if member.isMe}} <span class="badge">You</span>{{/if}}</h2>
+        <p class="drawer-subtitle">{{member.email}}</p>
+      </div>
+    </div>
+    <button type="button" class="icon-btn icon-btn-ghost" data-drawer-close aria-label="Close">{{icon "x" size=18}}</button>
+  </header>
+
+  <div class="drawer-content">
+    {{#if formError}}<div class="alert alert-error">{{icon "circle-alert" size=16}}<span>{{formError}}</span></div>{{/if}}
+
+    <dl class="detail-rows">
+      <div><dt>Status</dt><dd>{{#if member.active}}{{> shared/status tone="success" label="Active"}}{{else}}{{> shared/status tone="neutral" label="Inactive"}}{{/if}}</dd></div>
+      <div><dt>Phone</dt><dd>{{#if member.phone}}{{member.phone}}{{else}}<span class="muted">Not set</span>{{/if}}</dd></div>
+      <div><dt>Joined</dt><dd>{{member.joined}}</dd></div>
+    </dl>
+
+    <div class="field">
+      <div class="field-label-row">
+        <span class="field-label">Roles</span>
+        <span class="field-hint"><b data-role-count>{{assignedCount}}</b> selected</span>
+      </div>
+      {{#if member.isMe}}
+        <p class="field-hint">You can't change your own roles. Ask another admin.</p>
+      {{else}}
+        {{#unless canEditRoles}}<p class="field-hint">You can see roles but don't have permission to change them.</p>{{/unless}}
+      {{/if}}
+      <div class="role-picks">
+        {{#each roles}}
+          <label class="pick-row{{#if locked}} is-locked{{/if}}">
+            <input type="checkbox" name="roleIds" value="{{id}}" {{#if assigned}}checked{{/if}} {{#if locked}}disabled{{/if}} data-role-check />
+            {{#if locked}}{{#if assigned}}<input type="hidden" name="roleIds" value="{{id}}" />{{/if}}{{/if}}
+            <span class="pick-box">{{icon "check" size=12}}</span>
+            <span class="pick-name">{{name}}</span>
+            {{#if system}}<span class="badge">System</span>{{/if}}
+            {{#unless active}}<span class="badge">Inactive</span>{{/unless}}
+            <span class="pick-meta">{{permissionCount}} permission{{#unless (eq permissionCount 1)}}s{{/unless}}</span>
+          </label>
+        {{/each}}
+      </div>
+    </div>
+
+    {{#if canManage}}
+      <input type="hidden" name="activePresent" value="1" />
+      {{> shared/switch_field label="Account active" hint="When off, this person can't open the portal" checked=member.active}}
+    {{/if}}
+  </div>
+
+  <footer class="drawer-footer">
+    <button type="button" class="btn btn-outline" data-drawer-close>{{#if canSave}}Cancel{{else}}Close{{/if}}</button>
+    {{#if canSave}}<button type="submit" class="btn btn-primary" data-loading-text="Saving…">Save changes</button>{{/if}}
+  </footer>
+</form>

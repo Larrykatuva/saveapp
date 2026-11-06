@@ -1,0 +1,16 @@
+<div class="auth-card">
+  <header class="auth-header">
+    <span class="auth-badge">{{icon "badge-check" size=22}}</span>
+    <h1 class="auth-title">Two-step verification is on</h1>
+    <p class="auth-subtitle">Save these recovery codes somewhere safe, away from your phone. Each one lets you sign in once if you lose it. We won't show them again.</p>
+  </header>
+
+  <ul class="recovery-codes">
+    {{#each codes}}<li><code>{{this}}</code></li>{{/each}}
+  </ul>
+
+  <div class="auth-form">
+    <button type="button" class="btn btn-outline btn-block" data-copy="{{text}}">{{icon "copy" size=14}} Copy all codes</button>
+    <a class="btn btn-primary btn-block btn-lg" href="/auth/continue">I've saved them, continue {{icon "arrow-right" size=16}}</a>
+  </div>
+</div>

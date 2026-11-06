@@ -1,0 +1,40 @@
+{{#if cards.length}}
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Card</th>
+          <th>Cardholder</th>
+          <th class="hide-md">Reference</th>
+          <th>Status</th>
+          <th class="hide-md">Issued</th>
+          <th class="col-actions"><span class="sr-only">Open</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each cards}}
+          <tr class="row-link" data-drawer-url="{{drawerUrl}}">
+            <td>
+              <span class="entity">
+                <span class="tile tile-card">{{icon "credit-card" size=16}}</span>
+                <span class="entity-stack"><span class="entity-name">{{name}}</span><span class="entity-sub mono">{{maskedNumber}}</span></span>
+              </span>
+            </td>
+            <td>{{#if mobile}}{{mobile}}{{else}}<span class="muted">Not set</span>{{/if}}</td>
+            <td class="hide-md"><span class="code-chip">{{reference}}</span></td>
+            <td>{{> shared/status tone=tone label=status}}</td>
+            <td class="hide-md">{{issued}}</td>
+            <td class="col-actions"><button type="button" class="icon-btn icon-btn-ghost icon-btn-xs" data-drawer-url="{{drawerUrl}}" aria-label="Open {{name}}">{{icon "chevron-right" size=16}}</button></td>
+          </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+  {{> shared/pager}}
+{{else}}
+  {{#if filtered}}
+    {{> shared/empty icon="search" title="No cards match" text="Try another search or status."}}
+  {{else}}
+    {{> shared/empty icon="credit-card" title="No cards yet" text="Cards appear here as soon as your systems issue them through the API (POST /api/cards)."}}
+  {{/if}}
+{{/if}}

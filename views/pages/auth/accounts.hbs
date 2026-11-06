@@ -1,0 +1,35 @@
+<div class="auth-card">
+  <header class="auth-header">
+    <h1 class="auth-title">Choose an account</h1>
+    <p class="auth-subtitle">Hi {{firstName}}, you have access to more than one account. Pick where you'd like to go.</p>
+  </header>
+
+  {{> auth/alert}}
+
+  <ul class="account-list">
+    {{#each accounts}}
+      <li>
+        <form method="post" action="/auth/accounts">
+          <input type="hidden" name="_csrf" value="{{@root.csrfToken}}" />
+          <input type="hidden" name="accountId" value="{{id}}" />
+          <button type="submit" class="account-option{{#if current}} is-current{{/if}}">
+            <span class="tile">{{#if isStaff}}{{icon "shield-user" size=18}}{{else}}{{icon "building-2" size=18}}{{/if}}</span>
+            <span class="account-text">
+              <span class="account-name">{{name}}</span>
+              <span class="account-meta">{{description}} · {{portal}} portal</span>
+            </span>
+            {{#if current}}<span class="badge">Current</span>{{/if}}
+            {{icon "chevron-right" size=16 class="account-chevron"}}
+          </button>
+        </form>
+      </li>
+    {{/each}}
+  </ul>
+
+  <p class="auth-switch"><a class="link" href="/onboarding">{{icon "plus" size=14}} Set up another business</a></p>
+
+  <form method="post" action="/auth/logout" class="auth-switch">
+    <input type="hidden" name="_csrf" value="{{csrfToken}}" />
+    Not you? <button type="submit" class="link-button">Sign out</button>
+  </form>
+</div>

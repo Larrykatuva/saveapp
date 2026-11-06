@@ -1,0 +1,19 @@
+{{#> portal/section}}
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Invitations</h1>
+      <p class="page-subtitle">People invited to {{account.name}} who haven't joined yet. Links work for 7 days.</p>
+    </div>
+    {{#if rights.invite}}
+      <div class="page-actions">
+        <button type="button" class="btn btn-primary" data-drawer-url="{{base}}/invites/new">{{icon "user-plus" size=16}} Invite people</button>
+      </div>
+    {{/if}}
+  </div>
+
+  <section class="table-card">
+    <div id="invites-table" class="data-table" data-table-url="{{base}}/invites/list" data-history="off">
+      {{> team/invites}}
+    </div>
+  </section>
+{{/portal/section}}

@@ -1,0 +1,66 @@
+{{#> portal/section}}
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Onboarding</h1>
+      <p class="page-subtitle">Documents SaveApp needs from {{business.name}} in {{business.country}}.</p>
+    </div>
+  </div>
+
+  <div class="stack">
+    {{#if isReview}}
+      <div class="alert alert-info">{{icon "hourglass" size=16}}<span><span class="alert-title">With the SaveApp team.</span> Your documents are locked while we review them. We'll email you the outcome.</span></div>
+    {{else if isRejected}}
+      <div class="alert alert-error">{{icon "circle-alert" size=16}}<span><span class="alert-title">Some details need changes.</span> Replace the items marked below, then submit again.{{#if reviewNote}} Note from the reviewer: “{{reviewNote}}”{{/if}}</span></div>
+    {{else if isApproved}}
+      <div class="alert alert-success">{{icon "badge-check" size=16}}<span><span class="alert-title">Onboarding complete.</span> Your business is approved.</span></div>
+    {{else if isSuspended}}
+      <div class="alert alert-warning">{{icon "circle-pause" size=16}}<span><span class="alert-title">Business suspended.</span> Contact SaveApp support to resolve this.</span></div>
+    {{/if}}
+
+    <section class="table-card">
+      <div class="card-head">
+        <div>
+          <h2 class="card-title">Documents and details</h2>
+          <p class="card-subtitle">{{progress.provided}} of {{progress.required}} required items provided</p>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table class="table">
+          <thead><tr><th>Requirement</th><th>Your answer</th><th>Status</th><th class="col-actions"><span class="sr-only">Actions</span></th></tr></thead>
+          <tbody>
+            {{#each items}}
+              <tr>
+                <td>
+                  <span class="entity-stack">
+                    <span class="entity-name">{{name}}{{#unless required}} <span class="field-optional">(optional)</span>{{/unless}}</span>
+                    <span class="entity-sub">{{inputLabel}}{{#if help}} · {{help}}{{/if}}</span>
+                  </span>
+                </td>
+                <td>{{> kyc/submission}}</td>
+                <td>{{> kyc/item_status}}</td>
+                <td class="col-actions">
+                  {{#if @root.editable}}
+                    <button type="button" class="btn btn-outline btn-sm" data-drawer-url="/merchant/settings/onboarding/{{requirementId}}/submit">{{#if submission}}Replace{{else}}{{icon "upload" size=14}} Add{{/if}}</button>
+                  {{/if}}
+                </td>
+              </tr>
+            {{else}}
+              <tr><td colspan="4">{{> shared/empty icon="list-checks" title="Nothing to upload" text="SaveApp has no documents listed for your country yet. You can submit your business for review."}}</td></tr>
+            {{/each}}
+          </tbody>
+        </table>
+      </div>
+      {{#if editable}}
+        <div class="card-footer">
+          <p class="field-hint">{{#if canSubmit}}Everything required is in. Send it to the SaveApp team.{{else if progress.rejected}}Replace the items that need changes to submit again.{{else}}Add every required item to submit.{{/if}}</p>
+          <button type="button" class="btn btn-primary" data-post-url="/merchant/settings/onboarding/submit" {{#unless canSubmit}}disabled{{/unless}}>{{icon "send" size=15}} {{#if isRejected}}Submit again{{else}}Submit for review{{/if}}</button>
+        </div>
+      {{/if}}
+    </section>
+
+    <section class="card card-padded">
+      <div class="section-head"><h2 class="card-title">Your progress</h2></div>
+      {{> onboarding/stepper}}
+    </section>
+  </div>
+{{/portal/section}}

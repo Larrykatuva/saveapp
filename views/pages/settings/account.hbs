@@ -1,0 +1,87 @@
+{{#> portal/section}}
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">My account</h1>
+      <p class="page-subtitle">Your own details and password. They apply to every business you belong to.</p>
+    </div>
+  </div>
+
+  <div class="stack">
+    <section class="card">
+      <div class="card-head"><div><h2 class="card-title">Profile</h2><p class="card-subtitle">How your team sees you</p></div></div>
+      <div class="card-body" id="profile-form">
+        {{#with profile}}{{> settings/profile_form}}{{/with}}
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-head">
+        <div>
+          <h2 class="card-title">One-time codes</h2>
+          <p class="card-subtitle">Where we send codes for signing in and, later, for viewing sensitive details.</p>
+        </div>
+      </div>
+      <div class="card-body stack">
+        <div class="channel-list">
+          <div class="channel-row">
+            <span class="tile">{{icon "mail" size=16}}</span>
+            <span class="entity-stack"><span class="entity-name">Email</span><span class="entity-sub">{{codes.email}}</span></span>
+            {{> shared/status tone="success" label="Verified" small=true}}
+          </div>
+          <div class="channel-row">
+            <span class="tile">{{icon "smartphone" size=16}}</span>
+            <span class="entity-stack"><span class="entity-name">Phone (SMS)</span><span class="entity-sub">{{codes.phone}}</span></span>
+            {{#if codes.phoneVerified}}
+              {{> shared/status tone="success" label="Verified" small=true}}
+            {{else}}
+              <span class="row-actions">
+                {{> shared/status tone="warning" label="Not verified" small=true}}
+                <button type="button" class="btn btn-outline btn-sm" data-drawer-url="{{codes.base}}/phone/verify">Verify phone</button>
+              </span>
+            {{/if}}
+          </div>
+        </div>
+
+        <form method="post" action="{{codes.base}}/otp-channel" data-ajax-form class="channel-choice" novalidate>
+          <span class="field-label">Send my codes by</span>
+          <div class="segmented-choice" role="radiogroup" aria-label="Send my codes by">
+            <label class="choice{{#unless codes.bySms}} is-on{{/unless}}"><input type="radio" name="channel" value="email" {{#unless codes.bySms}}checked{{/unless}} />{{icon "mail" size=14}} Email</label>
+            <label class="choice{{#if codes.bySms}} is-on{{/if}}{{#unless codes.phoneVerified}} is-disabled{{/unless}}"><input type="radio" name="channel" value="sms" {{#if codes.bySms}}checked{{/if}} {{#unless codes.phoneVerified}}disabled{{/unless}} />{{icon "message-square" size=14}} SMS</label>
+          </div>
+          {{#unless codes.phoneVerified}}<p class="field-hint">Verify your phone to receive codes by SMS.</p>{{/unless}}
+          <div><button type="submit" class="btn btn-outline btn-sm" data-loading-text="Saving…">Save choice</button></div>
+        </form>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-head">
+        <div>
+          <h2 class="card-title">Two-step verification {{#if twoFactor.enabled}}{{> shared/status tone="success" label="On" small=true}}{{else}}{{> shared/status tone="neutral" label="Off" small=true}}{{/if}}</h2>
+          <p class="card-subtitle">{{#if twoFactor.enabled}}Since {{twoFactor.since}}. Signing in asks for a code from your authenticator app.{{else}}Ask for a code from an authenticator app every time you sign in.{{/if}}</p>
+        </div>
+      </div>
+      <div class="card-body">
+        {{#if twoFactor.enabled}}
+          <div class="two-factor-row">
+            <span class="tile">{{icon "key-round" size=16}}</span>
+            <span class="entity-stack"><span class="entity-name">Recovery codes</span><span class="entity-sub">{{twoFactor.recoveryLeft}} of 8 left</span></span>
+            <span class="row-actions">
+              <button type="button" class="btn btn-outline btn-sm" data-drawer-url="{{twoFactor.base}}/regenerate">New recovery codes</button>
+              <button type="button" class="btn btn-danger-outline btn-sm" data-drawer-url="{{twoFactor.base}}/disable">Turn off</button>
+            </span>
+          </div>
+        {{else}}
+          <button type="button" class="btn btn-primary" data-drawer-url="{{twoFactor.base}}/setup">{{icon "smartphone" size=16}} Set up authenticator app</button>
+        {{/if}}
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-head"><div><h2 class="card-title">Password</h2><p class="card-subtitle">Use one you don't use anywhere else</p></div></div>
+      <div class="card-body" id="password-form">
+        {{#with password}}{{> settings/password_form}}{{/with}}
+      </div>
+    </section>
+  </div>
+{{/portal/section}}

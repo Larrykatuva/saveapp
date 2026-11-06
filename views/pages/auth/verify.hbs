@@ -1,0 +1,23 @@
+<div class="auth-card">
+  <header class="auth-header">
+    <span class="auth-badge">{{icon "mail-check" size=22}}</span>
+    <h1 class="auth-title">Check your email</h1>
+    <p class="auth-subtitle">We sent a 6-digit code to <strong>{{email}}</strong>. Enter it below to verify your account.</p>
+  </header>
+
+  {{> auth/alert}}
+
+  <form method="post" action="/auth/verify" class="auth-form" novalidate data-loading-form>
+    <input type="hidden" name="_csrf" value="{{csrfToken}}" />
+    {{> auth/otp error=errors.code}}
+    <button type="submit" class="btn btn-primary btn-block btn-lg" data-loading-text="Verifying…">Verify email</button>
+  </form>
+
+  <form method="post" action="{{resendAction}}" class="auth-resend">
+    <input type="hidden" name="_csrf" value="{{csrfToken}}" />
+    <span>Didn't get a code?</span>
+    <button type="submit" class="link-button" data-countdown="60">Resend code</button>
+  </form>
+
+  <p class="auth-switch"><a class="link link-muted" href="/auth/login">{{icon "arrow-left" size=14}} Back to sign in</a></p>
+</div>

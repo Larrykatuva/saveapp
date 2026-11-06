@@ -1,0 +1,13 @@
+<ol class="stepper">
+  {{#each steps}}
+    <li class="step{{#if done}} is-done{{/if}}{{#if current}} is-current{{/if}}{{#if failed}} is-failed{{/if}}"{{#if current}} aria-current="step"{{/if}}>
+      <span class="step-marker">
+        {{#if done}}{{icon "check" size=14}}{{else if failed}}{{icon "x" size=14}}{{else}}{{number}}{{/if}}
+      </span>
+      <div class="step-body">
+        <p class="step-title">{{title}}{{#if done}}<span class="sr-only"> (completed)</span>{{/if}}</p>
+        <p class="step-text">{{text}}</p>
+      </div>
+    </li>
+  {{/each}}
+</ol>

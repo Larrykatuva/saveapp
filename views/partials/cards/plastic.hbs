@@ -1,0 +1,26 @@
+{{!--
+  The Ukonga UnionPay card face (art from ukonga-web). Takes name and last4.
+  With revealUrl it gets the eye button: a one-time code is sent, and once it
+  checks out the card spins a full turn and shows the number, expiry and CVV.
+--}}
+<div class="plastic{{#if extraClass}} {{extraClass}}{{/if}}{{#if inactive}} is-inactive{{/if}}"{{#if revealUrl}} data-card-reveal="{{revealUrl}}"{{/if}}>
+  <div class="plastic-spin" data-card-spin>
+    <div class="plastic-face plastic-front">
+      <div class="plastic-number-row">
+        <span class="plastic-number" data-card-number data-masked="**** **** **** {{last4}}">**** **** **** {{last4}}</span>
+        {{#if revealUrl}}
+          <button type="button" class="plastic-eye" data-card-reveal-open aria-label="View full card details">
+            <span data-eye-open>{{icon "eye" size=20}}</span><span data-eye-closed hidden>{{icon "eye-off" size=20}}</span>
+          </button>
+        {{/if}}
+      </div>
+      <div class="plastic-footer">
+        <div class="plastic-field"><span class="plastic-label">Card holder</span><span class="plastic-value plastic-holder">{{name}}</span></div>
+        <div class="plastic-field"><span class="plastic-label">Expires</span><span class="plastic-value" data-card-expiry>••/••</span></div>
+        <div class="plastic-field"><span class="plastic-label">CVV</span><span class="plastic-value" data-card-cvv>•••</span></div>
+      </div>
+      <div class="plastic-timer" data-card-timer hidden><span></span></div>
+    </div>
+    <div class="plastic-face plastic-back" aria-hidden="true"><span class="plastic-stripe"></span><span class="plastic-sign"></span></div>
+  </div>
+</div>

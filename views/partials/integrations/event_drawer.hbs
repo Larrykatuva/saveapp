@@ -1,0 +1,29 @@
+<div class="drawer-form">
+  <header class="drawer-header">
+    <div>
+      <p class="eyebrow">Webhook event</p>
+      <h2 class="drawer-title" id="drawer-title">{{delivery.event}}</h2>
+      <p class="drawer-subtitle mono">{{delivery.eventId}}</p>
+    </div>
+    <button type="button" class="icon-btn icon-btn-ghost" data-drawer-close aria-label="Close">{{icon "x" size=18}}</button>
+  </header>
+  <div class="drawer-content">
+    <dl class="detail-rows">
+      <div><dt>Outcome</dt><dd>{{#if delivery.delivered}}{{> shared/status tone="success" label="Delivered"}}{{else}}{{> shared/status tone="danger" label="Failed"}}{{/if}}</dd></div>
+      <div><dt>Sent</dt><dd>{{delivery.when}} · {{delivery.duration}} ms</dd></div>
+      <div><dt>Endpoint</dt><dd class="url-text">{{delivery.url}}</dd></div>
+      {{#if delivery.error}}<div><dt>Your endpoint said</dt><dd class="url-text">{{delivery.error}}</dd></div>{{/if}}
+    </dl>
+    <div class="field">
+      <div class="field-label-row">
+        <span class="field-label">Payload</span>
+        <button type="button" class="btn btn-outline btn-sm" data-copy="{{delivery.payload}}">{{icon "copy" size=14}} Copy</button>
+      </div>
+      <pre class="code-block">{{delivery.payload}}</pre>
+      <p class="field-hint">One-time codes are masked in the log; your endpoint received the real code.</p>
+    </div>
+  </div>
+  <footer class="drawer-footer">
+    <button type="button" class="btn btn-outline" data-drawer-close>Close</button>
+  </footer>
+</div>

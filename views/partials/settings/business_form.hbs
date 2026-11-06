@@ -1,0 +1,19 @@
+<form method="post" action="{{action}}" enctype="multipart/form-data" class="form-stack" data-ajax-form data-inline-form="#business-form" novalidate>
+  {{#if hasErrors}}<div class="alert alert-error">{{icon "circle-alert" size=16}}<span>Please fix the highlighted fields.</span></div>{{/if}}
+  {{#unless canEdit}}<div class="alert alert-info">{{icon "lock" size=16}}<span>Your role can see the business profile but not change it.</span></div>{{/unless}}
+  {{> auth/field name="name" label="Business name" value=values.name error=errors.name disabled=(not canEdit)}}
+  <div class="field-grid">
+    {{> auth/field name="email" label="Business email" type="email" value=values.email error=errors.email disabled=(not canEdit)}}
+    {{> auth/field name="phone" label="Business phone" type="tel" value=values.phone error=errors.phone inputmode="tel" disabled=(not canEdit)}}
+  </div>
+  {{> auth/field name="address" label="Physical address" value=values.address error=errors.address disabled=(not canEdit)}}
+  <div class="field">
+    <span class="field-label">Country</span>
+    <span class="field-static">{{#if countryFlag}}<img class="flag" src="{{countryFlag}}" alt="" />{{/if}}{{country}}</span>
+    <p class="field-hint">Set when the business was created. Contact SaveApp support to change it.</p>
+  </div>
+  {{#if canEdit}}
+    {{> shared/image_field label="Logo" error=errors.logo hint="Shown in the sidebar and to the SaveApp team." removeLabel="Remove the logo"}}
+    <div><button type="submit" class="btn btn-primary" data-loading-text="Saving…">Save changes</button></div>
+  {{/if}}
+</form>

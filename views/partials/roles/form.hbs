@@ -1,0 +1,26 @@
+<form class="drawer-form" method="post" action="{{action}}" data-ajax-form data-refresh="#roles-list" novalidate>
+  <header class="drawer-header">
+    <div>
+      <h2 class="drawer-title" id="drawer-title">{{#if editing}}Edit role{{else}}Create a new role{{/if}}</h2>
+      <p class="drawer-subtitle">Roles group permissions so you can give them to people in one go.</p>
+    </div>
+    <button type="button" class="icon-btn icon-btn-ghost" data-drawer-close aria-label="Close">{{icon "x" size=18}}</button>
+  </header>
+
+  <div class="drawer-content">
+    {{> auth/field name="name" label="Role name" value=values.name error=errors.name placeholder="e.g. Finance officer" autofocus=true}}
+    <div class="field{{#if errors.description}} has-error{{/if}}">
+      <label class="field-label" for="description">Description <span class="field-optional">(optional)</span></label>
+      <textarea id="description" name="description" class="textarea" rows="3" maxlength="200" placeholder="What is this role for?">{{values.description}}</textarea>
+      {{#if errors.description}}<p class="field-error">{{errors.description}}</p>{{/if}}
+    </div>
+    {{#unless editing}}
+      <p class="field-hint">You'll add permissions next, then give the role to people on the Members page.</p>
+    {{/unless}}
+  </div>
+
+  <footer class="drawer-footer">
+    <button type="button" class="btn btn-outline" data-drawer-close>Cancel</button>
+    <button type="submit" class="btn btn-primary" data-loading-text="Saving…">{{#if editing}}Save changes{{else}}Create role{{/if}}</button>
+  </footer>
+</form>

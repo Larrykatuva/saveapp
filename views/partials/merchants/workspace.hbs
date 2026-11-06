@@ -1,0 +1,27 @@
+<div class="workspace">
+  <aside class="workspace-aside" aria-label="{{merchant.name}}">
+    <a class="back-link" href="/admin/merchants">{{icon "arrow-left" size=14}} All merchants</a>
+    <div class="record-card">
+      <div class="record-cover">{{#if merchant.logo}}<img src="{{merchant.logo}}" alt="" data-fallback="{{merchant.initials}}" />{{else}}{{merchant.initials}}{{/if}}</div>
+      <div class="record-body">
+        <p class="record-title" title="{{merchant.name}}">{{merchant.name}}</p>
+        <p class="record-sub">{{merchant.email}}</p>
+        <div class="record-meta">
+          {{> shared/status tone=merchant.tone label=merchant.statusLabel small=true}}
+          {{#if merchant.country}}<span class="chip">{{#if merchant.flag}}<img class="flag" src="{{merchant.flag}}" alt="" />{{/if}}{{merchant.country}}</span>{{/if}}
+        </div>
+      </div>
+    </div>
+    <nav class="section-nav workspace-nav" aria-label="{{merchant.name}} sections">
+      {{#each workspaceNav}}
+        <p class="section-nav-title">{{title}}</p>
+        {{#each items}}
+          <a href="{{href}}" class="section-link{{#if active}} is-active{{/if}}"{{#if active}} aria-current="page"{{/if}}>{{icon icon size=18}}<span class="section-link-label">{{label}}</span></a>
+        {{/each}}
+      {{/each}}
+    </nav>
+  </aside>
+  <div class="workspace-content">
+    {{> @partial-block}}
+  </div>
+</div>

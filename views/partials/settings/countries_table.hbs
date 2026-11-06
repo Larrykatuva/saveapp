@@ -1,0 +1,50 @@
+{{#if countries.length}}
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Country</th>
+          <th>ISO code</th>
+          <th class="hide-md">Merchants</th>
+          <th class="hide-md">Requirements</th>
+          <th>Active</th>
+          <th class="col-actions"><span class="sr-only">Actions</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each countries}}
+          <tr>
+            <td><span class="entity"><img class="flag" src="{{logo}}" alt="" loading="lazy" width="24" height="17" /><span class="entity-name">{{name}}</span></span></td>
+            <td><span class="code-chip">{{code}}</span></td>
+            <td class="hide-md">{{businesses}}</td>
+            <td class="hide-md"><a class="link" href="/admin/settings/requirements?country={{id}}">{{requirements}}</a></td>
+            <td>
+              <label class="switch" title="{{#if active}}Deactivate{{else}}Activate{{/if}} {{name}}">
+                <input type="checkbox" data-toggle-url="/admin/settings/countries/{{id}}/toggle" {{#if active}}checked{{/if}} aria-label="{{name}} active" />
+                <span class="switch-track"><span class="switch-thumb"></span></span>
+              </label>
+            </td>
+            <td class="col-actions">
+              <div class="row-actions">
+                <button type="button" class="icon-btn icon-btn-ghost icon-btn-xs" data-drawer-url="/admin/settings/countries/{{id}}/edit" aria-label="Edit {{name}}">{{icon "pencil" size=15}}</button>
+                <button type="button" class="icon-btn icon-btn-ghost icon-btn-xs icon-btn-danger" data-confirm-url="/admin/settings/countries/{{id}}/delete" data-confirm-title="Delete {{name}}?" data-confirm-text="Countries that have merchants or requirements can't be deleted; deactivate them instead." aria-label="Delete {{name}}">{{icon "trash-2" size=15}}</button>
+              </div>
+            </td>
+          </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+  {{> shared/pager}}
+{{else}}
+  {{#if q}}
+    {{> shared/empty icon="search" title="No countries match" text="Try another name or ISO code."}}
+  {{else}}
+    <div class="empty-state">
+      <span class="empty-icon">{{icon "globe" size=20}}</span>
+      <p class="empty-title">No countries yet</p>
+      <p class="empty-text">Add the countries SaveApp works in so merchants can sign up.</p>
+      <button type="button" class="btn btn-primary btn-sm" data-drawer-url="/admin/settings/countries/new">{{icon "plus" size=14}} Add country</button>
+    </div>
+  {{/if}}
+{{/if}}

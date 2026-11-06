@@ -1,0 +1,27 @@
+{{#> merchants/workspace}}
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Cards</h1>
+      <p class="page-subtitle">UnionPay cards {{merchant.name}} issued through the API. Open one to check it live with UnionPay.</p>
+    </div>
+  </div>
+
+  <div class="tabs" role="tablist" aria-label="Filter by status">
+    {{#each tabs}}
+      <button type="button" role="tab" class="tab{{#if active}} is-active{{/if}}" data-table-tab="#cards-table" data-param="status" data-value="{{value}}" aria-selected="{{#if active}}true{{else}}false{{/if}}">{{label}} <span class="tab-count">{{count}}</span></button>
+    {{/each}}
+  </div>
+
+  <div class="toolbar">
+    <label class="input input-search">
+      {{icon "search" size=16}}
+      <input type="search" name="q" value="{{q}}" placeholder="Search by name, mobile, reference or last digits" aria-label="Search cards" data-table-search="#cards-table" autocomplete="off" />
+    </label>
+  </div>
+
+  <section class="table-card">
+    <div id="cards-table" class="data-table" data-table-url="{{tableUrl}}">
+      {{> cards/table}}
+    </div>
+  </section>
+{{/merchants/workspace}}

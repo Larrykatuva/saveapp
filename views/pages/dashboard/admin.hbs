@@ -1,0 +1,86 @@
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Good to see you, {{firstName}}</h1>
+    <p class="page-subtitle">{{#if canSeeMerchants}}{{totalMerchants}} merchant{{#unless (eq totalMerchants 1)}}s{{/unless}} on SaveApp · {{/if}}{{teamActive}} active team member{{#unless (eq teamActive 1)}}s{{/unless}}</p>
+  </div>
+  {{#if canSeeMerchants}}
+    <div class="page-actions">
+      <a class="btn btn-primary" href="/admin/merchants?status=review">{{icon "inbox" size=16}} Review queue</a>
+    </div>
+  {{/if}}
+</div>
+
+{{#if canSeeMerchants}}
+  <div class="tiles">
+    {{#each tiles}}
+      <a class="stat" href="{{href}}">
+        <span class="stat-head"><span>{{label}}</span><span class="tile">{{icon icon size=16}}</span></span>
+        <span class="stat-value">{{value}}</span>
+      </a>
+    {{/each}}
+  </div>
+
+  <h2 class="overview-section-title">Card activity <span>· last 30 days</span></h2>
+  {{> dashboard/activity_tiles tiles=activityTiles}}
+
+  <div class="grid-2 overview-grid">
+  <section class="table-card">
+    <div class="card-head">
+      <div>
+        <h2 class="card-title">Waiting for approval</h2>
+        <p class="card-subtitle">Merchants that submitted their documents, oldest first.</p>
+      </div>
+      <a class="btn btn-outline btn-sm" href="/admin/merchants?status=review">See all</a>
+    </div>
+    {{#if queue.length}}
+      <div class="table-wrap">
+        <table class="table">
+          <thead><tr><th>Merchant</th><th>Country</th><th>Submitted</th><th class="col-actions"><span class="sr-only">Review</span></th></tr></thead>
+          <tbody>
+            {{#each queue}}
+              <tr class="row-link" data-href="{{href}}">
+                <td>
+                  <span class="entity">
+                    {{#if logo}}<img class="tile" src="{{logo}}" alt="" data-fallback="{{initials}}" />{{else}}<span class="tile">{{initials}}</span>{{/if}}
+                    <span class="entity-stack"><span class="entity-name">{{name}}</span><span class="entity-sub">{{email}}</span></span>
+                  </span>
+                </td>
+                <td>{{country}}</td>
+                <td>{{submitted}}</td>
+                <td class="col-actions"><a class="btn btn-outline btn-sm" href="{{href}}">Review</a></td>
+              </tr>
+            {{/each}}
+          </tbody>
+        </table>
+      </div>
+    {{else}}
+      {{> shared/empty icon="inbox" title="Nothing to review" text="Merchants show up here once they submit their documents."}}
+    {{/if}}
+  </section>
+
+  <section class="card">
+    <div class="card-head">
+      <div>
+        <h2 class="card-title">Newest merchants</h2>
+        <p class="card-subtitle">The latest businesses on SaveApp.</p>
+      </div>
+      <a class="btn btn-outline btn-sm" href="/admin/merchants">All merchants</a>
+    </div>
+    <ul class="overview-list">
+      {{#each newMerchants}}
+        <li>
+          <a class="entity" href="{{href}}">
+            <span class="tile">{{initials}}</span>
+            <span class="entity-stack"><span class="entity-name">{{name}}</span><span class="entity-sub">Joined {{joined}} · {{cards}} card{{#unless (eq cards 1)}}s{{/unless}}</span></span>
+          </a>
+          {{> shared/status tone=tone label=status small=true}}
+        </li>
+      {{/each}}
+    </ul>
+  </section>
+  </div>
+
+  {{> dashboard/recent_transactions rows=recent showBusiness=true seeAll="/admin/analytics"}}
+{{else}}
+  <section class="card">{{> shared/empty icon="layout-grid" title="Welcome to the SaveApp admin portal" text="Your role doesn't include merchants yet. Ask a Super Admin if you need access."}}</section>
+{{/if}}

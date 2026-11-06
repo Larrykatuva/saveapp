@@ -1,0 +1,12 @@
+{{#if submission}}
+  {{#if submission.isFile}}
+    <a class="file-link" href="{{submission.url}}" target="_blank" rel="noopener">
+      {{#if submission.isImage}}<img src="{{submission.url}}" alt="" loading="lazy" />{{else}}<span class="file-icon">{{icon "file-text" size=16}}</span>{{/if}}
+      <span class="entity-stack"><span class="entity-name">{{submission.fileName}}</span><span class="entity-sub">{{submission.size}} · {{submission.submitted}}</span></span>
+    </a>
+  {{else}}
+    <span class="entity-stack"><span class="entity-name">{{submission.value}}</span><span class="entity-sub">{{submission.submitted}}</span></span>
+  {{/if}}
+{{else}}
+  <span class="muted">Not provided</span>
+{{/if}}

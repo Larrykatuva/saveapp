@@ -1,0 +1,10 @@
+<div class="field{{#if error}} has-error{{/if}}">
+  <label class="field-label" for="{{name}}">{{label}}</label>
+  <select id="{{name}}" name="{{name}}" class="select" {{#if disabled}}disabled{{/if}} {{#if error}}aria-invalid="true"{{/if}}>
+    {{#if placeholder}}<option value="">{{placeholder}}</option>{{/if}}
+    {{#each options}}
+      <option value="{{#if value}}{{value}}{{else}}{{id}}{{/if}}" {{#if selected}}selected{{/if}}>{{#if label}}{{label}}{{else}}{{name}}{{/if}}</option>
+    {{/each}}
+  </select>
+  {{#if error}}<p class="field-error">{{error}}</p>{{else if hint}}<p class="field-hint">{{hint}}</p>{{/if}}
+</div>

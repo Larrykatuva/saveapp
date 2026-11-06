@@ -1,0 +1,51 @@
+{{#> merchants/workspace}}
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Team</h1>
+      <p class="page-subtitle">Everyone with access to {{merchant.name}}, their roles and open invitations.</p>
+    </div>
+  </div>
+
+  <div class="stack">
+    <section class="table-card">
+      <div class="card-head"><div><h2 class="card-title">Members</h2><p class="card-subtitle">{{members.length}} account{{#unless (eq members.length 1)}}s{{/unless}}</p></div></div>
+      {{#if members.length}}
+        <div class="table-wrap">
+          <table class="table">
+            <thead><tr><th>Name</th><th>Roles</th><th>Status</th><th class="hide-md">Joined</th></tr></thead>
+            <tbody>
+              {{#each members}}
+                <tr>
+                  <td><span class="entity">{{> shared/avatar photo=photo initials=initials size="sm"}}<span class="entity-stack"><span class="entity-name">{{name}}</span><span class="entity-sub">{{email}}{{#if phone}} · {{phone}}{{/if}}</span></span></span></td>
+                  <td>{{#if roles.length}}{{#each roles}}<span class="chip">{{this}}</span> {{/each}}{{else}}<span class="muted">No role</span>{{/if}}</td>
+                  <td>{{#if active}}{{> shared/status tone="success" label="Active" small=true}}{{else}}{{> shared/status tone="neutral" label="Inactive" small=true}}{{/if}}</td>
+                  <td class="hide-md">{{joined}}</td>
+                </tr>
+              {{/each}}
+            </tbody>
+          </table>
+        </div>
+      {{else}}
+        {{> shared/empty icon="users" title="No members" text="Nobody has access to this business yet."}}
+      {{/if}}
+    </section>
+
+    <section class="table-card">
+      <div class="card-head"><div><h2 class="card-title">Invitations</h2><p class="card-subtitle">The latest invitations the business sent</p></div></div>
+      {{#if invites.length}}
+        <div class="table-wrap">
+          <table class="table">
+            <thead><tr><th>Email</th><th>Status</th><th class="hide-md">Sent</th></tr></thead>
+            <tbody>
+              {{#each invites}}
+                <tr><td>{{email}}</td><td>{{> shared/status tone=tone label=status small=true}}</td><td class="hide-md">{{sent}}</td></tr>
+              {{/each}}
+            </tbody>
+          </table>
+        </div>
+      {{else}}
+        {{> shared/empty icon="mail-plus" title="No invitations" text="The business hasn't invited anyone yet."}}
+      {{/if}}
+    </section>
+  </div>
+{{/merchants/workspace}}

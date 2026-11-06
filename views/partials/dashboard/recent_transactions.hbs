@@ -1,0 +1,41 @@
+{{!-- Latest card transactions; rows open the card (under cardsBase, default /merchant/cards). showBusiness adds the merchant (admin). --}}
+<section class="table-card">
+  <div class="card-head">
+    <div>
+      <h2 class="card-title">Recent transactions</h2>
+      <p class="card-subtitle">The latest money moving on {{#if showBusiness}}cards across SaveApp{{else if owner}}{{owner}}{{else}}your cards{{/if}}.</p>
+    </div>
+    {{#if seeAll}}<a class="btn btn-outline btn-sm" href="{{seeAll}}">See all</a>{{/if}}
+  </div>
+  {{#if rows.length}}
+    <div class="table-wrap">
+      <table class="table">
+        <thead><tr><th>Transaction</th>{{#if showBusiness}}<th>Merchant</th>{{/if}}<th>Card</th><th class="col-amount">Amount</th><th class="hide-md">When</th></tr></thead>
+        <tbody>
+          {{#each rows}}
+            <tr{{#unless ../showBusiness}} class="row-link" data-drawer-url="{{#if ../cardsBase}}{{../cardsBase}}{{else}}/merchant/cards{{/if}}/{{cardId}}"{{/unless}}>
+              <td>
+                <span class="entity">
+                  {{#if (eq direction "credit")}}
+                    <span class="tx-icon tx-icon-credit" title="Incoming payment">{{icon "arrow-down-left" size=16}}<span class="sr-only">Incoming payment</span></span>
+                  {{else if (eq direction "debit")}}
+                    <span class="tx-icon tx-icon-debit" title="Outgoing payment">{{icon "arrow-up-right" size=16}}<span class="sr-only">Outgoing payment</span></span>
+                  {{else}}
+                    <span class="tx-icon" title="No money moved">{{icon "minus" size=16}}<span class="sr-only">No money moved</span></span>
+                  {{/if}}
+                  <span class="entity-stack"><span class="entity-name">{{description}}</span><span class="entity-sub">{{#if merchantName}}{{merchantName}}{{else}}{{status}}{{/if}}</span></span>
+                </span>
+              </td>
+              {{#if ../showBusiness}}<td>{{businessName}}</td>{{/if}}
+              <td><span class="entity-stack"><span class="entity-name">{{cardName}}</span><span class="entity-sub mono">{{maskedNumber}}</span></span></td>
+              <td class="col-amount"><span class="entity-name amount{{#if direction}} amount-{{direction}}{{/if}}">{{amountText}}</span></td>
+              <td class="hide-md nowrap">{{when}}</td>
+            </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
+  {{else}}
+    {{> shared/empty icon="arrow-left-right" title="No transactions yet" text="They show up here as soon as cards are loaded or used."}}
+  {{/if}}
+</section>
