@@ -13,6 +13,7 @@ import {
   PHONE_RULE,
 } from '../../modules/authentication/dtos/auth-form.dtos';
 import {
+  OtpChannel,
   SignInMethod,
   User,
 } from '../../modules/authentication/entities/user.entity';
@@ -30,6 +31,9 @@ export interface AdminInput {
   password: string;
   phone: string;
   fullName: string;
+  // Where sign-in codes go. SMS marks the seeded phone as verified (it is
+  // the admin's own), so codes reach them even without working email.
+  codes?: OtpChannel;
 }
 
 /** Checks the input against the app's own rules; answers the problems. */
@@ -58,8 +62,18 @@ export function seedDataSource(): DataSource {
 
 export async function seedSuperAdmin(
   dataSource: DataSource,
-  { email, password, phone: phoneNumber, fullName }: AdminInput,
+  {
+    email,
+    password,
+    phone: phoneNumber,
+    fullName,
+    codes = OtpChannel.Email,
+  }: AdminInput,
 ): Promise<void> {
+  const channel: Partial<User> =
+    codes === OtpChannel.Sms
+      ? { phoneVerified: true, otpChannel: OtpChannel.Sms }
+      : {};
   const users = dataSource.getRepository(User);
   const accounts = dataSource.getRepository(Account);
 
@@ -68,7 +82,13 @@ export async function seedSuperAdmin(
   if (user) {
     await users.update(
       { id: user.id },
-      { password: hash, emailVerified: true, verified: true, active: true },
+      {
+        password: hash,
+        emailVerified: true,
+        verified: true,
+        active: true,
+        ...(codes === OtpChannel.Sms ? { phoneNumber, ...channel } : {}),
+      },
     );
     console.log(`Updated password for existing user ${email}.`);
   } else {
@@ -81,9 +101,15 @@ export async function seedSuperAdmin(
       verified: true,
       active: true,
       signInMethod: SignInMethod.SignUp,
+      ...channel,
     });
     console.log(`Created user ${email}.`);
   }
+  console.log(
+    codes === OtpChannel.Sms
+      ? `Sign-in codes go by SMS to ${phoneNumber}.`
+      : `Sign-in codes go by email to ${email}.`,
+  );
 
   let account = await accounts.findOneBy({
     user: { id: user.id },
