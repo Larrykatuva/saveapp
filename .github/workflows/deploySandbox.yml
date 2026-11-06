@@ -1,0 +1,39 @@
+name: Deploy SaveApp (sandbox)
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-sandbox
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: SSH & Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to Ubuntu VM via SSH (with password)
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          command_timeout: 20m
+          script: |
+            set -e
+            export NVM_DIR="/root/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+
+            cd /var/www/inibyte/saveapp
+            git stash
+            git fetch origin main
+            git checkout main
+            git pull --ff-only origin main
+            npm install
+            npm run build
+            pm2 restart saveapp --update-env
+            pm2 logs saveapp --lines 50 --nostream

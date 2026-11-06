@@ -10,7 +10,7 @@
  *
  * Email, phone and name default to Lawrence's; override them with
  * SEED_ADMIN_EMAIL, SEED_ADMIN_PHONE and SEED_ADMIN_NAME. Sign-in codes go
- * by SMS to that phone (SEED_ADMIN_CODES=email to use email). Safe to run again:
+ * by email (SEED_ADMIN_CODES=sms sends them to that phone). Safe to run again:
  * it resets the password and makes sure the Staff account and Super Admin
  * role are in place. Start the app once first so the roles exist.
  */
@@ -32,12 +32,11 @@ async function run() {
     ),
     fullName: process.env.SEED_ADMIN_NAME ?? 'Lawrence Katuva',
     password: process.env.SEED_ADMIN_PASSWORD ?? '',
-    // SMS unless told otherwise: works with Africa's Talking alone, even
-    // while the mail settings are a test inbox
+    // Email unless SEED_ADMIN_CODES=sms
     codes:
-      (process.env.SEED_ADMIN_CODES ?? 'sms').trim().toLowerCase() === 'email'
-        ? OtpChannel.Email
-        : OtpChannel.Sms,
+      (process.env.SEED_ADMIN_CODES ?? 'email').trim().toLowerCase() === 'sms'
+        ? OtpChannel.Sms
+        : OtpChannel.Email,
   };
   const problems = adminProblems(input);
   if (problems.length) {

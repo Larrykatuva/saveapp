@@ -31,8 +31,8 @@ export interface AdminInput {
   password: string;
   phone: string;
   fullName: string;
-  // Where sign-in codes go. SMS marks the seeded phone as verified (it is
-  // the admin's own), so codes reach them even without working email.
+  // Where sign-in codes go (email by default). SMS marks the seeded phone
+  // as verified (it is the admin's own).
   codes?: OtpChannel;
 }
 
@@ -73,7 +73,7 @@ export async function seedSuperAdmin(
   const channel: Partial<User> =
     codes === OtpChannel.Sms
       ? { phoneVerified: true, otpChannel: OtpChannel.Sms }
-      : {};
+      : { otpChannel: OtpChannel.Email };
   const users = dataSource.getRepository(User);
   const accounts = dataSource.getRepository(Account);
 
@@ -87,7 +87,9 @@ export async function seedSuperAdmin(
         emailVerified: true,
         verified: true,
         active: true,
-        ...(codes === OtpChannel.Sms ? { phoneNumber, ...channel } : {}),
+        // Running the seed again also moves codes to the chosen channel
+        ...(codes === OtpChannel.Sms ? { phoneNumber } : {}),
+        ...channel,
       },
     );
     console.log(`Updated password for existing user ${email}.`);
