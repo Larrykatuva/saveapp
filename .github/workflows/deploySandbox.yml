@@ -20,15 +20,18 @@ jobs:
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.HOST }}
+          port: ${{ secrets.PORT }}
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
           command_timeout: 20m
           script: |
             set -e
-            export NVM_DIR="/root/.nvm"
+            # Node and pm2 from nvm (the login user's, or root's)
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] || export NVM_DIR="/root/.nvm"
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 
-            cd /var/www/inibyte/saveapp
+            cd /var/www/saveapp
             git stash
             git fetch origin main
             git checkout main
