@@ -18,7 +18,9 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "create:admin": "ts-node src/database/seeds/create-admin.ts"
+    "create:admin": "ts-node src/database/seeds/create-admin.ts",
+    "seed": "ts-node src/database/seeds/seed.ts",
+    "seed:prod": "node dist/database/seeds/seed.js"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1149.0",

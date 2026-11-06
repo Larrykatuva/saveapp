@@ -17,6 +17,7 @@ import {
   WebhookEvent,
 } from '../entities/webhook.entity';
 import { WebhookDelivery } from '../entities/webhook-delivery.entity';
+import { isProduction } from '../../../configs/environment';
 
 const MAX_ENDPOINTS = 5;
 
@@ -50,7 +51,7 @@ export class WebhookService extends EntityService<Webhook> {
   }
 
   private get production() {
-    return this.configService.get<string>('ENV') === 'PROD';
+    return isProduction(this.configService.get<string>('ENV'));
   }
 
   /** HTTPS in production, and never an address on SaveApp's own network. */

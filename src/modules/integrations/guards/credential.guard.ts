@@ -18,6 +18,7 @@ import {
   CredentialWithScopes,
   normalizeIp,
 } from '../services/credential.service';
+import { isProduction } from '../../../configs/environment';
 
 /**
  * Checks a credential may be used from this request's IP: in production the
@@ -85,7 +86,7 @@ export class CredentialGuard implements CanActivate {
     assertIpAllowed(
       credential,
       request,
-      this.configService.get<string>('ENV') === 'PROD',
+      isProduction(this.configService.get<string>('ENV')),
       this.logger,
     );
 

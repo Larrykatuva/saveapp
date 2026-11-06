@@ -14,6 +14,7 @@ import { FormError } from '../../shared/utils/form.util';
 import { SystemRoles } from '../constants/roles.catalog';
 import { AuthorizationLevel } from '../entities/permission.entity';
 import { RoleScope, RoleService } from './role.service';
+import { isDev } from '../../../configs/environment';
 
 export const INVITE_DAYS = 7;
 
@@ -246,7 +247,7 @@ export class InviteService extends EntityService<Invite> {
         expiryDays: INVITE_DAYS,
       },
     });
-    if (this.configService.get<string>('ENV') === 'DEV')
+    if (isDev(this.configService.get<string>('ENV')))
       this.logger.debug(`[DEV] invitation link for ${invite.email}: ${url}`);
   }
 }

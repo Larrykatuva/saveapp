@@ -22,6 +22,7 @@ import {
 } from '../../guards/credential.guard';
 import { ApiTokenService } from '../../services/api-token.service';
 import { CredentialService } from '../../services/credential.service';
+import { isProduction } from '../../../../configs/environment';
 
 const MAX_FAILURES = 5;
 const LOCKOUT_MS = 15 * 60_000;
@@ -70,7 +71,7 @@ export class AuthApiController {
     assertIpAllowed(
       credential,
       req,
-      this.configService.get<string>('ENV') === 'PROD',
+      isProduction(this.configService.get<string>('ENV')),
       this.logger,
     );
     await this.attemptService.clear(key);

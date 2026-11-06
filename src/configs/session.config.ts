@@ -4,6 +4,7 @@ import { NextFunction, Request, Response } from 'express';
 import session from 'express-session';
 import { RedisStore } from 'connect-redis';
 import { createClient } from 'redis';
+import { isDeployed } from './environment';
 
 // Own cookie name so a water-solution session on the same host never collides
 export const SESSION_COOKIE = 'sa.sid';
@@ -73,7 +74,7 @@ declare module 'express-session' {
 export default async function configureSession(
   app: NestExpressApplication,
 ): Promise<void> {
-  const production = process.env.ENV === 'PROD';
+  const deployed = isDeployed();
   const secret = process.env.SESSION_SECRET ?? process.env.PRIVATE_KEY;
   if (!secret) throw new Error('SESSION_SECRET (or PRIVATE_KEY) must be set');
 
@@ -81,7 +82,8 @@ export default async function configureSession(
   redis.on('error', (error) => console.error('Session store error', error));
   await redis.connect();
 
-  if (production) app.set('trust proxy', 1);
+  // Behind Cloudflare/nginx: real client IP and https in req.protocol
+  if (deployed) app.set('trust proxy', 1);
 
   // Terraka documents its webhooks as `"application/json; charset=utf8` (a
   // stray quote, and "utf8" without the hyphen). body-parser answers 415 to
@@ -111,7 +113,7 @@ export default async function configureSession(
       cookie: {
         httpOnly: true,
         sameSite: 'lax',
-        secure: production,
+        secure: deployed,
         maxAge: SESSION_TTL_MS,
       },
     }),
