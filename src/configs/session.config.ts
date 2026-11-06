@@ -5,6 +5,7 @@ import session from 'express-session';
 import { RedisStore } from 'connect-redis';
 import { createClient } from 'redis';
 import { isDeployed } from './environment';
+import { TRUSTED_PROXIES } from './proxy';
 
 // Own cookie name so a water-solution session on the same host never collides
 export const SESSION_COOKIE = 'sa.sid';
@@ -82,8 +83,9 @@ export default async function configureSession(
   redis.on('error', (error) => console.error('Session store error', error));
   await redis.connect();
 
-  // Behind Cloudflare/nginx: real client IP and https in req.protocol
-  if (deployed) app.set('trust proxy', 1);
+  // Behind Cloudflare and nginx: the real client IP in req.ip and https in
+  // req.protocol (see proxy.ts for why it's a list, not a hop count)
+  if (deployed) app.set('trust proxy', TRUSTED_PROXIES);
 
   // Terraka documents its webhooks as `"application/json; charset=utf8` (a
   // stray quote, and "utf8" without the hyphen). body-parser answers 415 to
