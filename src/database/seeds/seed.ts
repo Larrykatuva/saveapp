@@ -9,12 +9,14 @@
  *                                                 # production), after npm run build
  *
  * Email, phone and name default to Lawrence's; override them with
- * SEED_ADMIN_EMAIL, SEED_ADMIN_PHONE and SEED_ADMIN_NAME. Safe to run again:
+ * SEED_ADMIN_EMAIL, SEED_ADMIN_PHONE and SEED_ADMIN_NAME. Sign-in codes go
+ * by SMS to that phone (SEED_ADMIN_CODES=email to use email). Safe to run again:
  * it resets the password and makes sure the Staff account and Super Admin
  * role are in place. Start the app once first so the roles exist.
  */
 import { config } from 'dotenv';
 import { appEnv } from '../../configs/environment';
+import { OtpChannel } from '../../modules/authentication/entities/user.entity';
 import { adminProblems, seedDataSource, seedSuperAdmin } from './admin.seed';
 
 config();
@@ -30,6 +32,12 @@ async function run() {
     ),
     fullName: process.env.SEED_ADMIN_NAME ?? 'Lawrence Katuva',
     password: process.env.SEED_ADMIN_PASSWORD ?? '',
+    // SMS unless told otherwise: works with Africa's Talking alone, even
+    // while the mail settings are a test inbox
+    codes:
+      (process.env.SEED_ADMIN_CODES ?? 'sms').trim().toLowerCase() === 'email'
+        ? OtpChannel.Email
+        : OtpChannel.Sms,
   };
   const problems = adminProblems(input);
   if (problems.length) {
